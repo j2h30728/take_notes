@@ -6,6 +6,7 @@
 
 ### Algorithm
 
-- [정렬 알고리즘](./algorithm/정렬/)
-- [그리디(탐욕적) 알고리즘](./algorithm/그리디-탐욕적/)
+- [정렬 알고리즘](./algorithm/정렬)
+- [그리디(탐욕적) 알고리즘](./algorithm/그리디-탐욕적)
 - [이진탐색 알고리즘](./algorithm/이진탐색/이진탐색.md)
+- [백트래킹 알고리즘](./algorithm/백트래킹/index.md)
