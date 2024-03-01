@@ -4,6 +4,10 @@
 
 - [모던 자바스크립트 Deep Dive 자바스크립트와 기본 개념과 동작 원리](./javascript/deepdive/)
 
+### Web Technologies
+
+- [ws: a Node.js WebSocket library](./web-technologies/ws/)
+
 ### Algorithm
 
 - [정렬 알고리즘](./algorithm/정렬)
