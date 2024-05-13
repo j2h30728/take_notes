@@ -8,6 +8,7 @@
 
 - [페이지라우터와 앱라우터 차이](./next.js/migration.md)
 - [next.js 앱라우터 개념](./next.js/next.js.md)
+- [[App router] intercepting + parallel routes 로 모달 만들기](./next.js/example/README.md)
 
 ### Javascript
 
