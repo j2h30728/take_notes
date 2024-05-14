@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.group:hover .animate-infiniteSlide {
+  animation-play-state: paused;
+}
+
+.group:hover .animate-afterInfiniteSlide {
+  animation-play-state: paused;
+}
