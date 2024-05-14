@@ -14,12 +14,19 @@ const config: Config = {
       },
       keyframes: {
         infiniteSlide: {
-          "0%": { transform: "translateX(0)" },
-          "100%": { transform: "translateX(-50%)" },
+          "0%": { transform: "translateX(0%)" },
+          "50%": { transform: "translateX(-100%)" },
+          "50.1%": { transform: "translateX(100%)" },
+          "100%": { transform: "translateX(0%)" },
+        },
+        afterInfiniteSlide: {
+          "0%": { transform: "translateX(0%)" },
+          "100%": { transform: "translateX(-200%)" },
         },
       },
       animation: {
-        infiniteSlide: "infiniteSlide 5s linear infinite",
+        infiniteSlide: "infiniteSlide 20s linear infinite",
+        afterInfiniteSlide: "afterInfiniteSlide 20s linear infinite",
       },
     },
   },
