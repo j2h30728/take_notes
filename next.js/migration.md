@@ -8,14 +8,17 @@
   - 특수 파일에는 `.js`, `.jsx` 또는 `.tsx` 파일 확장자를 사용 가능
 - 컴포넌트, 스타일, 테스트 등과 같은 다른 파일을 앱 디렉토리 내에 배치할 수 있습니다.
 
-|                   | page-router                               | app-router                              |
-| ----------------- | ----------------------------------------- | --------------------------------------- |
-| 데이터 가져오기   | `getServerSideProps` 및 `getStaticProps`  | 앱 내부의 새로운 API로 대체             |
-|                   | `getStaticPaths`                          | `generateStaticParams`                  |
-|                   | `pages/\_app.js` 및 `pages/\_document.js` | 단일 `app/layout.js` 루트 레이아웃      |
-|                   | `pages/\_error.js`                        | 더 세분화된 `error.js` 특수 파일로 대체 |
-| 전역 url 에러처리 | `pages/404.js`                            | `not-found.js`                          |
-| API routes        | `pages/api/\* API`                        | `route.js`(라우트 핸들러)               |
+|                                                                                  | page-router                                                                              | app-router                                           |
+| -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| 데이터 가져오기                                                                  | `getStaticProps`                                                                         | `fetch('https://...')`                               |
+|                                                                                  | `getServerSideProps`                                                                     | `fetch('https://...', { cache: 'no-store' })`        |
+|                                                                                  | Incremental Static Regeneration                                                          | `fetch('https://...', { next: { revalidate: 60 } })` |
+|                                                                                  | `getStaticPaths`                                                                         | `generateStaticParams`                               |
+|                                                                                  | `pages/app.js` 및 `pages/document.js`                                                    | 단일 `app/layout.js` 루트 레이아웃                   |
+| 클라이언트에서 발생하는 에러 또는 서버에서 발생하는 500 에러를 핸들링파는 페이지 | `pages/error.js`                                                                         | 더 세분화된 `error.js` 특수 파일로 대체              |
+| 전역 url 에러처리                                                                | `pages/404.js`                                                                           | `not-found.js`                                       |
+| 서버에서 발생하는 에러 핸들링하는 페이지                                         | `pages/500.js` <br/>: `_error.tsx`와 `500.tsx` 모두 있다면 `500.tsx`가 우선적으로 실행됨 |                                                      |
+| API routes                                                                       | `pages/api/*`                                                                            | `route.js`(라우트 핸들러)                            |
 
 ## 1. Step 1: Creating the app directory
 
