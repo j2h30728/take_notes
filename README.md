@@ -20,6 +20,10 @@
 - [socket.IO : 공식문서 tutorial](./web-technologies/socket.IO-tutorial/)
 - [socket.IO : 채팅방 실습](./web-technologies/socket.IO/)
 
+### Mini Project
+
+- [50 projects](./mini-project/50projects/)
+
 ### Algorithm
 
 - [정렬 알고리즘](./algorithm/정렬)
