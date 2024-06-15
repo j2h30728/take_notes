@@ -14,6 +14,10 @@
 
 - [모던 자바스크립트 Deep Dive 자바스크립트와 기본 개념과 동작 원리](./javascript/deepdive/)
 
+### Frontend
+
+- [[Vanilla JS] webpack 설정하기](./frontend/basic-webpack-setup/)
+
 ### Web Technologies
 
 - [ws: a Node.js WebSocket library](./web-technologies/ws/)
