@@ -28,6 +28,7 @@
 ### Mini Project
 
 - [50 projects](./mini-project/50projects/)
+- [VanillaJS로 만들기](./mini-project/VanillaJS/)
 
 ### Algorithm
 
