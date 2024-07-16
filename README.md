@@ -13,6 +13,7 @@
 ### Javascript
 
 - [모던 자바스크립트 Deep Dive 자바스크립트와 기본 개념과 동작 원리](./javascript/deepdive/)
+- [함수형 프로그래밍과 JavaScript ES6+](./javascript/functional-javascript/)
 
 ### Frontend
 
