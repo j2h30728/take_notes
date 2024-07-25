@@ -19,6 +19,7 @@
 
 - [[Vanilla JS] webpack 설정하기](./frontend/basic-webpack-setup/)
 - [[React / TS / SCSS] webpack 설정하기 - boilerplate](./frontend/react-ts-webpack-setup/)
+- [JS 베이스의 프론트엔드 프레임워크와 라이브러리 이해하기](./frontend/JS-베이스의-프론트엔드-프레임워크와-라이브러리-이해하기/)
 
 ### Web Technologies
 

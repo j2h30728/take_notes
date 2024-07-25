@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TODO App + 바닐라 자바스크립트</title>
+    <style>
+      .todo.completed {
+        text-decoration: line-through;
+        color: #999;
+      }
+      .todo.editing > * {
+        display: none;
+      }
+      .todo.editing .todo-edit-input {
+        display: block;
+      }
+      .todo-edit-input {
+        display: none;
+      }
+      #todo-list[data-filter="active"] .todo.completed {
+        display: none;
+      }
+      #todo-list[data-filter="completed"] .todo:not(.completed) {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <input id="todo-input" type="text" placeholder="할일을 입력해주세요." />
+    <ol id="todo-list" data-filter="all"></ol>
+    <hr />
+    <span>남은 할 일 : <span id="num-remained-todos">0</span></span>
+    <button id="btn-show-all">전체보기</button><button id="btn-show-active">해야할 일 보기</button
+    ><button id="btn-show-completed">완료한 일 보기</button>
+    <hr />
+    <button id="btn-toggle-all">전체완료토글</button>
+    <button id="btn-delete-completed">완료된 할일 삭제</button>
+    <script>
+      const todoList = document.getElementById("todo-list");
+      function createTodo(todoData) {
+        const { title, isCompleted } = todoData;
+        const li = document.createElement("li");
+        li.className = "todo";
+        if (isCompleted) li.classList.add("completed");
+        li.innerHTML = `<input type='checkbox' ${
+          isCompleted ? "checked" : ""
+        } /><span class='title'>${title}</span><input class='todo-edit-input' type='input'/><button class='delete'>x</button>`;
+        todoList.appendChild(li);
+      }
+      // 1. 할 일 목록 생성 - 사용자가 새로운 할 일을 입력할 수 있게 하는 기능
+      // 2. 할 일 목록 표시 - 입력된 할 일을 목록 형태로 보여주는 기능
+      document.getElementById("todo-input").addEventListener("keydown", (event) => {
+        if (event.isComposing) return; // 한글 조합시 콜백함수 실행 되지않도록 하게 함
+        if (event.key === "Enter") {
+          const title = event.target.value;
+          createTodo({ title, isCompleted: false });
+          event.target.value = "";
+        }
+        updateRemainedTodos();
+        saveTodos();
+      });
+      // 3. 할일 완료 표시 - 할 일의 완료 상태를 표시 및 변경할 수 있는 기능
+      todoList.addEventListener("click", (event) => {
+        if (event.target.tagName === "INPUT" && event.target.type === "checkbox") {
+          const li = event.target.closest("li");
+          if (event.target.checked) {
+            li.classList.add("completed");
+          } else {
+            li.classList.remove("completed");
+          }
+        }
+        updateRemainedTodos();
+        saveTodos();
+      });
+      // 4. 할 일 개수 표시 - 전체 및 남아 있는 할 일의 개수를 표시하는 기능
+      function updateRemainedTodos() {
+        const num_remained_todos = document.querySelectorAll(".todo:not(.completed)").length;
+        document.getElementById("num-remained-todos").innerText = num_remained_todos;
+      }
+      // 5. 할 일 삭제 - 목록에서 특정 할 일을 삭제하는 기능
+      todoList.addEventListener("click", (event) => {
+        const button = event.target.closest("button.delete");
+        if (button) {
+          const todo = button.closest(".todo");
+          todo.remove();
+          updateRemainedTodos();
+        }
+        saveTodos();
+      });
+      // 6. 할 일 수정 - 이미 입력된 할 일의 내용을 수정하는 기능
+      todoList.addEventListener("dblclick", (event) => {
+        const title = event.target.closest("span.title");
+        const input = event.target.closest(".todo-edit-input");
+
+        if (title) {
+          const todo = event.target.closest(".todo");
+          todo.classList.add("editing");
+          todo.querySelector("input.todo-edit-input").value = title.innerText;
+        }
+        saveTodos();
+      });
+      todoList.addEventListener("keydown", (event) => {
+        const input = event.target.closest("input.todo-edit-input");
+        if (input) {
+          if (event.isComposing) return;
+          if (event.key === "Enter") {
+            const todo = event.target.closest(".todo");
+            todo.classList.remove("editing");
+            todo.querySelector(".title").innerText = input.value;
+          }
+        }
+        saveTodos();
+      });
+      todoList.addEventListener(
+        "blur",
+        (event) => {
+          const input = event.target.closest("input.todo-edit-input");
+          if (input) {
+            const todo = event.target.closest(".todo");
+            todo.classList.remove("editing");
+            todo.querySelector(".title").innerText = input.value;
+          }
+          saveTodos();
+        },
+        true
+      );
+      // 7. 할 일 필터링 - 완료된 할 일과 진행 중인 할 일을 구분하여 볼 수 있는 필터 기능
+      document.getElementById("btn-show-all").addEventListener("click", (event) => {
+        todoList.setAttribute("data-filter", "all");
+      });
+      document.getElementById("btn-show-active").addEventListener("click", (event) => {
+        todoList.setAttribute("data-filter", "active");
+      });
+      document.getElementById("btn-show-completed").addEventListener("click", (event) => {
+        todoList.setAttribute("data-filter", "completed");
+      });
+      // 8. 할 일 일괄 완료 처리 - 모든 할 일을 한 번에 완료 처리할 수 있는 기능
+      document.getElementById("btn-toggle-all").addEventListener("click", (event) => {
+        const isAllChecked = [...todoList.querySelectorAll(".todo")].every((todo) =>
+          todo.classList.contains("completed")
+        );
+        todoList.querySelectorAll(".todo").forEach((todo) => {
+          if (isAllChecked) {
+            todo.classList.remove("completed");
+            const checkbox = todo.querySelector("input[type='checkbox']");
+            console.log(checkbox);
+            checkbox.checked = false;
+          } else {
+            todo.classList.add("completed");
+            const checkbox = todo.querySelector("input[type='checkbox']");
+            checkbox.checked = true;
+          }
+        });
+        saveTodos();
+      });
+      // 9. 할 일 일괄 삭제 처리 - 완료된 할 일만을 선택저으로 일괄 삭제하는 기능
+      document.getElementById("btn-delete-completed").addEventListener("click", (event) => {
+        todoList.querySelectorAll(".todo").forEach((todo) => {
+          const isCompleted = todo.classList.contains("completed");
+          if (isCompleted) {
+            todo.remove();
+          }
+        });
+        saveTodos();
+      });
+
+      // 10. 지속성 - 데이터를 지속적으로 저장하여, 웹 페이지 새로고침 후에도 할 일 목록을 유지하는 기능
+
+      // 직렬화
+      function saveTodos() {
+        const todoData = [...todoList.querySelectorAll(".todo")].map((todo) => ({
+          title: todo.querySelector(".title").innerText,
+          isCompleted: todo.querySelector("input[type='checkbox']").checked,
+        }));
+        localStorage.setItem("todo", JSON.stringify(todoData));
+      }
+
+      // 역 질렬화
+      const savedTodoData = JSON.parse(localStorage.getItem("todo")) || [];
+      savedTodoData.forEach((todoData) => {
+        createTodo(todoData);
+      });
+    </script>
+  </body>
+</html>
