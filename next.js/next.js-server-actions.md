@@ -1,4 +1,4 @@
-# Next.js : 풀스택 - 캐럿마켓 클론코딩
+# Next.js : Server actions
 
 # 5.0 [Route Handlers](https://nextjs.org/docs/app/building-your-application/routing/route-handlers)
 
