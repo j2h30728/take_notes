@@ -10,4 +10,8 @@
 
 ##### [tailwind 개념 및 설명](./next.js-tailwind.md)
 
-##### [server actions 관련](./next.js-server-actions.md) : server actions, useFormStatus, useActionState, 'use server'
+##### [Server actions 관련](./next.js-server-actions.md) : server actions, useFormStatus, useActionState, 'use server'
+
+### next.js 실습
+
+##### [Server Actions 실습](./server-actions/)
