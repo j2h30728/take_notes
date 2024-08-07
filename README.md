@@ -12,6 +12,7 @@
 - next.js 관련 학습 및 정리
   - [tailwind 개념 및 설명](./next.js/next.js-tailwind.md)
   - [server actions 관련](./next.js/next.js-server-actions.md) : server actions, useFormStatus, useActionState, 'use server'
+  - [zod 개념 및 설명](./next.js/next.js-zod.md)
 - nest.js 실습
   - [Server Actions 실습](./next.js/server-actions/)
 
