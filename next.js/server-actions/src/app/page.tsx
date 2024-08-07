@@ -1,19 +1,14 @@
 "use client";
 
+import { useFormState } from "react-dom";
+
+import { handleForm } from "./actions";
 import FormButton from "@/components/form-button";
 import FormInput from "@/components/form-input";
-import { handleForm } from "./actions";
-import { useFormState } from "react-dom";
 import ConformMessage from "@/components/conform-message";
 
-export interface FormDataType {
-  email: string;
-  username: string;
-  password: string;
-}
-
 export default function Home() {
-  const [state, action] = useFormState(handleForm, { status: "initial", message: "" });
+  const [state, action] = useFormState(handleForm, null);
 
   return (
     <main className="flex flex-col gap-5 pt-10">
@@ -24,7 +19,7 @@ export default function Home() {
           type="email"
           placeholder="이메일을 입력해주세요."
           required={true}
-          errorMessage=""
+          errorMessage={state?.error?.fieldErrors.email}
           label="💌"
         />
         <FormInput
@@ -32,7 +27,7 @@ export default function Home() {
           type="username"
           placeholder="이름을 입력해주세요."
           required={true}
-          errorMessage=""
+          errorMessage={state?.error?.fieldErrors.username}
           label="👤"
         />
         <FormInput
@@ -40,13 +35,13 @@ export default function Home() {
           type="password"
           placeholder="비밀번호를 입력해주세요."
           required={true}
-          errorMessage={state.error?.password}
+          errorMessage={state?.error?.fieldErrors.password}
           label="🔑"
         />
         <FormButton text="LOG IN" />
       </form>
-      {state.status === "success" && <ConformMessage status="success" message={state.message} />}
-      {state.status === "error" && <ConformMessage status="error" message={state.message} />}
+      {state?.success && <ConformMessage status="success" message={"환영합니다."} />}
+      {state?.error && <ConformMessage status="error" message={"잘못된 입력입니다."} />}
     </main>
   );
 }

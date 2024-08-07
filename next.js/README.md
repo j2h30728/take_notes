@@ -17,3 +17,10 @@
 ### next.js 실습
 
 ##### - [Server Actions 실습](./server-actions/)
+
+- tailwind
+- server actions
+- useFormStatus
+- useActionState(useFormState)
+- 'use server'
+- zod

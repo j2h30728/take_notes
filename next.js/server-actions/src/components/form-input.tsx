@@ -14,7 +14,7 @@ export default function FormInput({
   type: HTMLInputTypeAttribute;
   placeholder: string;
   required: boolean;
-  errorMessage?: string | undefined;
+  errorMessage?: string[];
   label: ReactNode;
 } & InputHTMLAttributes<HTMLInputElement>) {
   const { pending } = useFormStatus();
@@ -36,7 +36,13 @@ export default function FormInput({
           {...rest}
         />
       </div>
-      <span className="pl-1 text-red-400">{errorMessage}</span>
+      <div className="flex flex-col">
+        {errorMessage?.map((errorMessage) => (
+          <span key={errorMessage} className="pl-1 text-red-400">
+            {errorMessage}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
