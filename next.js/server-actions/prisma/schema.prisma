@@ -9,15 +9,15 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlserver"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
 model User {
   id         Int      @id @default(autoincrement())
-  username   String
-  password   String
-  email      String   @unique
+  username   String   @unique
+  password   String?
+  email      String?  @unique
   bio        String?
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -28,7 +28,7 @@ model User {
 
 model Tweet {
   id         Int      @id @default(autoincrement())
-  tweet      String   @db.VarChar(255)
+  tweet      String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
@@ -36,6 +36,8 @@ model Tweet {
   userId Int
 
   likes Like[]
+
+  @@index([userId])
 }
 
 model Like {
@@ -46,4 +48,8 @@ model Like {
   tweetId Int
   user    User  @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   userId  Int
+
+  @@unique([tweetId, userId], name: "liked_twwet")
+  @@index([userId])
+  @@index([tweetId])
 }
