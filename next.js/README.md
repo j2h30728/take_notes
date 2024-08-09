@@ -14,6 +14,8 @@
 
 ##### - [zod 개념 및 설명](./next.js-zod.md)
 
+##### - [Authentication 구현 설명(iron-session, bcrypt, middleware)](./next.js-authentication.md)
+
 ### next.js 실습
 
 ##### - [Server Actions 실습](./server-actions/)
