@@ -5,7 +5,11 @@ export async function middleware(req: NextRequest) {
   const session = await getSession();
 
   console.log(session);
-  if (req.nextUrl.pathname.startsWith("/create-account") || req.nextUrl.pathname.startsWith("/log-in")) {
+  if (
+    req.nextUrl.pathname === "/" ||
+    req.nextUrl.pathname.startsWith("/create-account") ||
+    req.nextUrl.pathname.startsWith("/log-in")
+  ) {
     if (session.id) {
       return NextResponse.redirect(new URL("/profile", req.url));
     } else {
