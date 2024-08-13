@@ -5,8 +5,11 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Server Actions",
-  description: "서버액션을 학습합니다. ",
+  title: {
+    template: "%s | Dam Gum",
+    default: "Dam Gum",
+  },
+  description: "무엇이든 담굽니다.",
 };
 
 export default function RootLayout({
@@ -16,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-stone-100 max-w-screen-sm mx-auto px-3 py-1`}>{children}</body>
+      <body className={`${inter.className} bg-stone-100 max-w-screen-sm mx-auto`}>{children}</body>
     </html>
   );
 }

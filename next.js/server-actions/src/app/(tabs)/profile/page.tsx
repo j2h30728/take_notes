@@ -9,7 +9,7 @@ export default async function ProfilePage() {
   const loggedInUser = await getUserInfoBySessionId();
 
   return (
-    <main className="flex flex-col gap-5 pt-10 justify-between h-screen py-10">
+    <main className="flex flex-col gap-5 pt-10 pb-40 justify-between h-screen px-3">
       <div className="my-auto flex flex-col items-center gap-4 *:font-medium">
         <span className="text-9xl">🐹</span>
         <h3>어서오세요! {loggedInUser.username}님!</h3>
@@ -20,9 +20,8 @@ export default async function ProfilePage() {
     </main>
   );
 }
-export async function getUserInfoBySessionId() {
+async function getUserInfoBySessionId() {
   const session = await getSession();
-  console.log(session);
   if (session.id) {
     const user = await db.user.findUnique({
       where: {

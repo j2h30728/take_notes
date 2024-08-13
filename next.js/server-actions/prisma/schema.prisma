@@ -19,6 +19,7 @@ model User {
   password   String?
   email      String?  @unique
   bio        String?
+  avatar     String?
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
@@ -27,12 +28,16 @@ model User {
 }
 
 model Tweet {
-  id         Int      @id @default(autoincrement())
-  tweet      String
+  id    Int    @id @default(autoincrement())
+  tweet String
+  title String
+  price Float
+  photo String
+
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  User   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int
 
   likes Like[]

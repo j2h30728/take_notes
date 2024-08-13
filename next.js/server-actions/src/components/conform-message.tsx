@@ -1,6 +1,4 @@
-import { FormStatus } from "@/app/actions";
-
-export default function ConformMessage({ status, message }: { status: FormStatus; message: string }) {
+export default function ConformMessage({ status, message }: { status: "success" | "error"; message: string }) {
   switch (status) {
     case "success":
       return (

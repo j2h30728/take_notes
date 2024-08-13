@@ -2,7 +2,6 @@ import { z } from "zod";
 
 import { PASSWORD_MIN_LENGTH, PASSWORD_REGEX, USERNAME_MIN_LENGTH } from "./contants";
 import { isEmailExists, isEmailUnique, isUsernameUnique } from "./validate";
-import db from "./db";
 
 export const accountSchema = z
   .object({
