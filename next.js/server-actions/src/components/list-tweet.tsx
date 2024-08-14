@@ -15,7 +15,7 @@ export default function ListTweet({ title, price, created_at, photo, id }: ListT
   return (
     <Link href={`/tweets/${id}`} className="flex gap-5">
       <div className="relative size-40 rounded-md overflow-hidden">
-        <Image className="object-cover" fill src={photo} alt={title} sizes="40" />
+        <Image className="object-cover" fill src={`${photo}/middle`} alt={title} sizes="40" />
       </div>
       <div className="flex flex-col gap-1 *:text-stone-700">
         <span className="text-lg">{title}</span>

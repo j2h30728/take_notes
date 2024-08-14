@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-stone-100 max-w-screen-sm mx-auto`}>{children}</body>
+      <body className={`${inter.className} relative bg-stone-100 max-w-screen-sm mx-auto`}>{children}</body>
     </html>
   );
 }

@@ -15,7 +15,7 @@ export default function FormInput({
   placeholder: string;
   required: boolean;
   errorMessage?: string[];
-  label: ReactNode;
+  label?: ReactNode;
 } & InputHTMLAttributes<HTMLInputElement>) {
   const { pending } = useFormStatus();
 

@@ -41,12 +41,12 @@ export default async function TweetDetail({ params }: { params: { id: string } }
   return (
     <div className="pb-36">
       <div className="relative aspect-square">
-        <Image className="object-cover" fill src={tweet.photo} alt={tweet.title} />
+        <Image className="object-cover" fill src={`${tweet.photo}/public`} alt={tweet.title} />
       </div>
       <div className="p-5 flex items-center gap-3 border-b border-neutral-700">
         <div className="size-10 rounded-full">
           {tweet.user.avatar !== null ? (
-            <Image src={tweet.user.avatar} width={40} height={40} alt={tweet.user.username} />
+            <Image src={`${tweet.user.avatar}/avatar`} width={40} height={40} alt={tweet.user.username} />
           ) : (
             <UserIcon />
           )}

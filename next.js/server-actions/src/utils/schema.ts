@@ -59,3 +59,18 @@ export const logInSchema = z.object({
     required_error: "비밀번호는 필수 값입니다.",
   }),
 });
+
+export const tweetSchema = z.object({
+  photo: z.string({
+    required_error: "이미지는 필수 값입니다.",
+  }),
+  title: z.string({
+    required_error: "제목은 필수 값입니다.",
+  }),
+  tweet: z.string({
+    required_error: "자세한 설명은 필수 값입니다.",
+  }),
+  price: z.coerce.number({
+    required_error: "가격은 필수 값입니다.",
+  }),
+});

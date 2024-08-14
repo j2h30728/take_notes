@@ -13,14 +13,11 @@ export default function TweetList({ initialTweets }: { initialTweets: InitialTwe
 
   useEffect(() => {
     const fetchMoreTweet = async () => {
-      const tweets = await getPaginatedTweets(page);
-      if (tweets.length === 0) {
-        setIsLastPage(true);
-      } else {
-        setTweets(tweets);
-      }
+      const { tweets, isLastPage } = await getPaginatedTweets(page);
+      setIsLastPage(isLastPage);
+      setTweets(tweets);
     };
-    if (page > 1) fetchMoreTweet();
+    fetchMoreTweet();
   }, [page]);
 
   return (
@@ -29,13 +26,16 @@ export default function TweetList({ initialTweets }: { initialTweets: InitialTwe
         {tweets.map((product) => (
           <ListTweet key={product.id} {...product} />
         ))}
-      </div>{" "}
+      </div>
       <div className="w-full max-w-screen-sm flex bottom-32 fixed mx-auto gap-10 items-center justify-center">
-        <button onClick={() => setPage((prev) => (prev === 1 ? prev : prev - 1))} disabled={page === 1}>
+        <button className="disabled:text-stone-200" onClick={() => setPage((prev) => (prev === 1 ? prev : prev - 1))} disabled={page === 1}>
           <ChevronLeftIcon width={20} height={20} />
         </button>
         <span>{page}</span>
-        <button onClick={() => setPage((prev) => (isLastPage ? prev : prev + 1))} disabled={isLastPage}>
+        <button
+          className="disabled:text-stone-200"
+          onClick={() => setPage((prev) => (isLastPage ? prev : prev + 1))}
+          disabled={isLastPage}>
           <ChevronRightIcon width={20} height={20} />
         </button>
       </div>

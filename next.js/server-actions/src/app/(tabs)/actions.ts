@@ -2,9 +2,9 @@
 
 import db from "@/utils/db";
 
-const LIMIT_NUMBER = 3;
-export async function getPaginatedTweets(page: number) {
-  const tweets = db.tweet.findMany({
+const LIMIT_NUMBER = 2;
+export async function getTweetsByPage(page: number) {
+  const tweets = await db.tweet.findMany({
     select: {
       title: true,
       price: true,
@@ -12,11 +12,23 @@ export async function getPaginatedTweets(page: number) {
       photo: true,
       id: true,
     },
-    skip: LIMIT_NUMBER * page,
+    skip: LIMIT_NUMBER * (page - 1),
     take: LIMIT_NUMBER,
     orderBy: {
       created_at: "desc",
     },
   });
   return tweets;
+}
+
+export async function getTweetTotalCount() {
+  return db.tweet.count();
+}
+
+export async function getPaginatedTweets(page: number) {
+  const tweets = await getTweetsByPage(page);
+  const TWEETS_TOTAL_COUNT = await getTweetTotalCount();
+
+  const isLastPage = TWEETS_TOTAL_COUNT <= LIMIT_NUMBER * page;
+  return { tweets, isLastPage };
 }
