@@ -1,17 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { formatToTimeAgo, formatToWon } from "@/utils/utils";
+import { formatToTimeAgo } from "@/utils/utils";
+import { PaginatedTweets } from "@/app/(tabs)/actions";
 
-interface ListTweetProps {
-  title: string;
-  price: number;
-  created_at: Date;
-  photo: string;
-  id: number;
-}
+type TweetProps = PaginatedTweets[number];
 
-export default function ListTweet({ title, price, created_at, photo, id }: ListTweetProps) {
+export default function ListTweet({ id, photo, title, created_at, views, _count }: TweetProps) {
   return (
     <Link href={`/tweets/${id}`} className="flex gap-5">
       <div className="relative size-40 rounded-md overflow-hidden">
@@ -20,7 +15,9 @@ export default function ListTweet({ title, price, created_at, photo, id }: ListT
       <div className="flex flex-col gap-1 *:text-stone-700">
         <span className="text-lg">{title}</span>
         <span className="text-sm text-stone-400">{formatToTimeAgo(created_at.toString())}</span>
-        <span className="text-lg font-semibold">{formatToWon(price)}</span>
+        <span className="text-lg font-semibold">조회 {views}</span>
+        <span className="text-lg font-semibold">{_count.comments}</span>
+        <span className="text-lg font-semibold">{_count.likes}</span>
       </div>
     </Link>
   );

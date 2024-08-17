@@ -6,4 +6,12 @@
   .primary-button {
     @apply w-full rounded-3xl text-stone-600 font-medium bg-stone-300 py-2 hover:bg-stone-200 active:bg-stone-100 transition-colors;
   }
+
+  .comment-form > :first-child {
+    width: 80%;
+    min-width: 250px;
+  }
+  .comment-form > :last-child {
+    width: 20%;
+  }
 }

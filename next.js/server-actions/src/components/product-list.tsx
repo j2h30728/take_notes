@@ -1,21 +1,21 @@
 "use client";
 
-import { getPaginatedTweets } from "@/app/(tabs)/actions";
 import { useEffect, useState } from "react";
-import ListTweet from "./list-tweet";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
-import { InitialTweets } from "@/app/(tabs)/page";
+import ListProduct from "./list-product";
+import { InitialProducts } from "@/app/(tabs)/products/page";
+import { getPaginatedProducts } from "@/app/(tabs)/products/actions";
 
-export default function TweetList({ initialTweets }: { initialTweets: InitialTweets }) {
-  const [tweets, setTweets] = useState(initialTweets);
+export default function ProductList({ initialProducts }: { initialProducts: InitialProducts }) {
+  const [products, setProducts] = useState(initialProducts);
   const [page, setPage] = useState(1);
   const [isLastPage, setIsLastPage] = useState(false);
 
   useEffect(() => {
     const fetchMoreTweet = async () => {
-      const { tweets, isLastPage } = await getPaginatedTweets(page);
+      const { products, isLastPage } = await getPaginatedProducts(page);
       setIsLastPage(isLastPage);
-      setTweets(tweets);
+      setProducts(products);
     };
     fetchMoreTweet();
   }, [page]);
@@ -23,8 +23,8 @@ export default function TweetList({ initialTweets }: { initialTweets: InitialTwe
   return (
     <div>
       <div className="p-5 flex flex-col gap-5">
-        {tweets.map((tweet) => (
-          <ListTweet key={tweet.id} {...tweet} />
+        {products.map((product) => (
+          <ListProduct key={product.id} {...product} />
         ))}
       </div>
       <div className="w-full max-w-screen-sm flex bottom-32 fixed mx-auto gap-10 items-center justify-center">

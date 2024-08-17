@@ -1,12 +1,9 @@
-import { notFound } from "next/navigation";
-
 import FormButton from "@/components/form-button";
-import { getSession } from "@/utils/session";
-import db from "@/utils/db";
 import { logOut } from "./actions";
+import { getUserInfoBySession } from "@/service/userService";
 
 export default async function ProfilePage() {
-  const loggedInUser = await getUserInfoBySessionId();
+  const loggedInUser = await getUserInfoBySession();
 
   return (
     <main className="flex flex-col gap-5 pt-10 pb-40 justify-between h-screen px-3">
@@ -19,18 +16,4 @@ export default async function ProfilePage() {
       </form>
     </main>
   );
-}
-async function getUserInfoBySessionId() {
-  const session = await getSession();
-  if (session.id) {
-    const user = await db.user.findUnique({
-      where: {
-        id: session.id,
-      },
-    });
-    if (user) {
-      return user;
-    }
-  }
-  notFound();
 }

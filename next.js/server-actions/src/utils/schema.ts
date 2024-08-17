@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { PASSWORD_MIN_LENGTH, PASSWORD_REGEX, USERNAME_MIN_LENGTH } from "./contants";
-import { isEmailExists, isEmailUnique, isUsernameUnique } from "./validate";
+import { isEmailExists, isUsernameExists } from "./validate";
 
 export const accountSchema = z
   .object({
@@ -26,7 +26,7 @@ export const accountSchema = z
       .regex(PASSWORD_REGEX, "반드시 1개 이상의 숫자를 포함해야 합니다."),
   })
   .superRefine(async ({ email }, ctx) => {
-    if (await isEmailUnique(email)) {
+    if (await isEmailExists(email)) {
       ctx.addIssue({
         code: "custom",
         message: "이미 존재하는 이메일입니다.",
@@ -37,10 +37,10 @@ export const accountSchema = z
     }
   })
   .superRefine(async ({ username }, ctx) => {
-    if (await isUsernameUnique(username)) {
+    if (await isUsernameExists(username)) {
       ctx.addIssue({
         code: "custom",
-        message: "이미 존재하는 이메일입니다.",
+        message: "이미 존재하는 이름입니다.",
         path: ["username"],
         fatal: true,
       });
@@ -60,6 +60,21 @@ export const logInSchema = z.object({
   }),
 });
 
+export const productSchema = z.object({
+  photo: z.string({
+    required_error: "이미지는 필수 값입니다.",
+  }),
+  title: z.string({
+    required_error: "제목은 필수 값입니다.",
+  }),
+  description: z.string({
+    required_error: "자세한 설명은 필수 값입니다.",
+  }),
+  price: z.coerce.number({
+    required_error: "가격은 필수 값입니다.",
+  }),
+});
+
 export const tweetSchema = z.object({
   photo: z.string({
     required_error: "이미지는 필수 값입니다.",
@@ -67,10 +82,13 @@ export const tweetSchema = z.object({
   title: z.string({
     required_error: "제목은 필수 값입니다.",
   }),
-  tweet: z.string({
+  description: z.string({
     required_error: "자세한 설명은 필수 값입니다.",
   }),
-  price: z.coerce.number({
-    required_error: "가격은 필수 값입니다.",
-  }),
 });
+
+export const commentSchema = z
+  .string({
+    required_error: "코멘트 내용은 필수 값입니다.",
+  })
+  .max(200, "코멘트는 최대 200자 입니다.");

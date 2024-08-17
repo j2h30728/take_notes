@@ -31,9 +31,9 @@ export default function TabBar() {
         activeIcon={<SolidHomeIcon className="size-7" />}
       />
       <TabButton
-        title="생활"
-        pathname="/life"
-        isActive={pathname === "/life"}
+        title="상품"
+        pathname="/products"
+        isActive={pathname === "/products"}
         defaultIcon={<OutlineNewspaperIcon className="size-7" />}
         activeIcon={<SolidNewspaperIcon className="size-7" />}
       />

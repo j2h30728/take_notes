@@ -113,8 +113,103 @@ const prisma = new PrismaClient();
   }
 ```
 
+#### npx prisma db seed
+
 ## 10.8 Recap
 
 ## 10.9 Infinite Scrolling
 
 ## 10.10 Recap
+
+### offset 기반 페이지네이션 구현
+
+#### 페이지네이션 prisma 코드
+
+```ts
+"use server";
+
+import db from "@/utils/db";
+
+const LIMIT_NUMBER = 2;
+export async function getTweetsByPage(page: number) {
+  const tweets = await db.tweet.findMany({
+    select: {
+      title: true,
+      price: true,
+      created_at: true,
+      photo: true,
+      id: true,
+    },
+    skip: LIMIT_NUMBER * (page - 1),
+    take: LIMIT_NUMBER,
+    orderBy: {
+      created_at: "desc",
+    },
+  });
+  return tweets;
+}
+
+export async function getTweetTotalCount() {
+  return db.tweet.count();
+}
+
+export async function getPaginatedTweets(page: number) {
+  const tweets = await getTweetsByPage(page);
+  const TWEETS_TOTAL_COUNT = await getTweetTotalCount();
+
+  const isLastPage = TWEETS_TOTAL_COUNT <= LIMIT_NUMBER * page;
+  return { tweets, isLastPage };
+}
+```
+
+#### 페이지네이션을 부르는 tweet-list 컴포넌트
+
+```tsx
+"use client";
+
+import { getPaginatedTweets } from "@/app/(tabs)/actions";
+import { InitialTweets } from "@/app/(tabs)/page";
+import { useEffect, useState } from "react";
+import ListTweet from "./list-tweet";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
+
+export default function TweetList({ initialTweets }: { initialTweets: InitialTweets }) {
+  const [tweets, setTweets] = useState(initialTweets);
+  const [page, setPage] = useState(1);
+  const [isLastPage, setIsLastPage] = useState(false);
+
+  useEffect(() => {
+    const fetchMoreTweet = async () => {
+      const { tweets, isLastPage } = await getPaginatedTweets(page);
+      setIsLastPage(isLastPage);
+      setTweets(tweets);
+    };
+    fetchMoreTweet();
+  }, [page]);
+
+  return (
+    <div>
+      <div className="p-5 flex flex-col gap-5">
+        {tweets.map((product) => (
+          <ListTweet key={product.id} {...product} />
+        ))}
+      </div>
+      <div className="w-full max-w-screen-sm flex bottom-32 fixed mx-auto gap-10 items-center justify-center">
+        <button
+          className="disabled:text-stone-200"
+          onClick={() => setPage((prev) => (prev === 1 ? prev : prev - 1))}
+          disabled={page === 1}>
+          <ChevronLeftIcon width={20} height={20} />
+        </button>
+        <span>{page}</span>
+        <button
+          className="disabled:text-stone-200"
+          onClick={() => setPage((prev) => (isLastPage ? prev : prev + 1))}
+          disabled={isLastPage}>
+          <ChevronRightIcon width={20} height={20} />
+        </button>
+      </div>
+    </div>
+  );
+}
+```

@@ -1,16 +1,18 @@
 "use server";
 
 import db from "@/utils/db";
+import { Prisma } from "@prisma/client";
 
 const LIMIT_NUMBER = 2;
 export async function getTweetsByPage(page: number) {
   const tweets = await db.tweet.findMany({
-    select: {
-      title: true,
-      price: true,
-      created_at: true,
-      photo: true,
-      id: true,
+    include: {
+      _count: {
+        select: {
+          comments: true,
+          likes: true,
+        },
+      },
     },
     skip: LIMIT_NUMBER * (page - 1),
     take: LIMIT_NUMBER,
@@ -32,3 +34,4 @@ export async function getPaginatedTweets(page: number) {
   const isLastPage = TWEETS_TOTAL_COUNT <= LIMIT_NUMBER * page;
   return { tweets, isLastPage };
 }
+export type PaginatedTweets = Prisma.PromiseReturnType<typeof getTweetsByPage>;

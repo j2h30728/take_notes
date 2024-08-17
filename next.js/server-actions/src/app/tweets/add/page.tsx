@@ -61,13 +61,12 @@ export default function AddTweets() {
         </label>
         <input onChange={onImageChange} type="file" id="photo" name="photo" accept="image/*" className="hidden" />
         <FormInput name="title" type="text" required placeholder="제목" errorMessage={state?.fieldErrors.title} />
-        <FormInput name="price" type="number" required placeholder="가격" errorMessage={state?.fieldErrors.price} />
         <FormInput
-          name="tweet"
+          name="description"
           type="text"
           required
           placeholder="자세한 설명"
-          errorMessage={state?.fieldErrors.tweet}
+          errorMessage={state?.fieldErrors.description}
         />
         <FormButton text="작성 완료" />
       </form>

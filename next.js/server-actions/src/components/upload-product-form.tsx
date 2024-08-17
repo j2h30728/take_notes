@@ -4,11 +4,11 @@ import { useState } from "react";
 import { useFormState } from "react-dom";
 import { PhotoIcon } from "@heroicons/react/24/solid";
 
+import { getUploadUrl, uploadProduct } from "@/app/products/add/actions";
 import FormInput from "./form-input";
 import FormButton from "./form-button";
-import { getUploadUrl, uploadTweet } from "@/app/tweets/add/actions";
 
-export default function UploadTweetForm() {
+export default function UploadProductForm() {
   const [preview, setPreview] = useState("");
   const [uploadUrl, setUploadUrl] = useState("");
   const [photoId, setPhotoId] = useState("");
@@ -40,7 +40,7 @@ export default function UploadTweetForm() {
     if (response.status !== 200) return;
     const photoUrl = `https://imagedelivery.net/wLHa2XjZzk_8Ca42_eTQww/${photoId}`;
     formData.set("photo", photoUrl);
-    return uploadTweet(_, formData);
+    return uploadProduct(_, formData);
   };
 
   const [state, action] = useFormState(interceptAction, null);
@@ -62,6 +62,7 @@ export default function UploadTweetForm() {
         <input onChange={onImageChange} type="file" id="photo" name="photo" accept="image/*" className="hidden" />
         <div className="flex flex-col gap-3">
           <FormInput name="title" type="text" required placeholder="제목" errorMessage={state?.fieldErrors.title} />
+          <FormInput name="price" type="number" required placeholder="가격" errorMessage={state?.fieldErrors.price} />
           <FormInput
             name="description"
             type="text"

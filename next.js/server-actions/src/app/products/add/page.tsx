@@ -4,11 +4,11 @@ import { useState } from "react";
 import { useFormState } from "react-dom";
 import { PhotoIcon } from "@heroicons/react/24/solid";
 
-import FormInput from "./form-input";
-import FormButton from "./form-button";
-import { getUploadUrl, uploadTweet } from "@/app/tweets/add/actions";
+import FormButton from "@/components/form-button";
+import FormInput from "@/components/form-input";
+import { getUploadUrl, uploadProduct } from "./actions";
 
-export default function UploadTweetForm() {
+export default function AddProducts() {
   const [preview, setPreview] = useState("");
   const [uploadUrl, setUploadUrl] = useState("");
   const [photoId, setPhotoId] = useState("");
@@ -40,18 +40,18 @@ export default function UploadTweetForm() {
     if (response.status !== 200) return;
     const photoUrl = `https://imagedelivery.net/wLHa2XjZzk_8Ca42_eTQww/${photoId}`;
     formData.set("photo", photoUrl);
-    return uploadTweet(_, formData);
+    return uploadProduct(_, formData);
   };
 
   const [state, action] = useFormState(interceptAction, null);
 
   return (
-    <form action={action} className="p-5 flex flex-col gap-5">
-      <div className="flex justify-between">
+    <div>
+      <form action={action} className="p-5 flex flex-col gap-5">
         <label
           htmlFor="photo"
           style={{ backgroundImage: `url(${preview})` }}
-          className=" w-40 border-2 aspect-square flex items-center justify-center flex-col text-neutral-300 border-neutral-300 rounded-md border-dashed cursor-pointer bg-center bg-cover ">
+          className="border-2 aspect-square flex items-center justify-center flex-col text-neutral-300 border-neutral-300 rounded-md border-dashed cursor-pointer bg-center bg-cover ">
           {preview === "" ? (
             <>
               <PhotoIcon className="w-20" />
@@ -60,18 +60,17 @@ export default function UploadTweetForm() {
           ) : null}
         </label>
         <input onChange={onImageChange} type="file" id="photo" name="photo" accept="image/*" className="hidden" />
-        <div className="flex flex-col gap-3">
-          <FormInput name="title" type="text" required placeholder="제목" errorMessage={state?.fieldErrors.title} />
-          <FormInput
-            name="description"
-            type="text"
-            required
-            placeholder="자세한 설명"
-            errorMessage={state?.fieldErrors.description}
-          />
-        </div>
-      </div>
-      <FormButton text="작성 완료" />
-    </form>
+        <FormInput name="title" type="text" required placeholder="제목" errorMessage={state?.fieldErrors.title} />
+        <FormInput name="price" type="number" required placeholder="가격" errorMessage={state?.fieldErrors.price} />
+        <FormInput
+          name="description"
+          type="text"
+          required
+          placeholder="자세한 설명"
+          errorMessage={state?.fieldErrors.description}
+        />
+        <FormButton text="작성 완료" />
+      </form>
+    </div>
   );
 }

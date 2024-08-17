@@ -1,6 +1,6 @@
 import db from "./db";
 
-export const isUsernameUnique = async (username: string) => {
+export const isUsernameExists = async (username: string) => {
   const user = await db.user.findUnique({
     where: {
       username,
@@ -9,21 +9,7 @@ export const isUsernameUnique = async (username: string) => {
       id: true,
     },
   });
-
-  return !Boolean(user);
-};
-
-export const isEmailUnique = async (email: string) => {
-  const user = await db.user.findUnique({
-    where: {
-      email,
-    },
-    select: {
-      id: true,
-    },
-  });
-
-  return !Boolean(user);
+  return user;
 };
 
 export const isEmailExists = async (email: string) => {

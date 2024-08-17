@@ -39,7 +39,6 @@ const createAccount = async ({ username, email, password }: { username: string; 
       id: true,
     },
   });
-
   const cookie = await getSession();
   cookie.id = user.id;
   await cookie.save();
