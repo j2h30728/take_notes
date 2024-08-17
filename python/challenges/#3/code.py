@@ -12,7 +12,7 @@ while True:
 
     if (operation == 'exit'):
         break
-    if (operation == '+'):
+    elif (operation == '+'):
         print("Result:", a + b)
     elif (operation == '-'):
         print("Result:", a - b)
