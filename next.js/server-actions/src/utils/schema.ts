@@ -9,6 +9,7 @@ export const accountSchema = z
       .string({
         required_error: "이메일은 필수 값입니다.",
       })
+      .trim()
       .email("이메일 형식으로 작성해주세요.")
       .refine((email) => email.includes("@zod.com"), "@zod.com 만 허용됩니다."),
     username: z
@@ -53,6 +54,7 @@ export const logInSchema = z.object({
     .string({
       required_error: "이메일은 필수 값입니다.",
     })
+    .trim()
     .email("이메일 형식으로 작성해주세요.")
     .refine(isEmailExists, "존재하지않는 유저입니다."),
   password: z.string({
@@ -61,34 +63,56 @@ export const logInSchema = z.object({
 });
 
 export const productSchema = z.object({
-  photo: z.string({
-    required_error: "이미지는 필수 값입니다.",
-  }),
-  title: z.string({
-    required_error: "제목은 필수 값입니다.",
-  }),
-  description: z.string({
-    required_error: "자세한 설명은 필수 값입니다.",
-  }),
+  photo: z
+    .string({
+      required_error: "이미지는 필수 값입니다.",
+    })
+    .trim()
+    .min(1, "이미지는 빈 값이 될 수 없습니다."),
+  title: z
+    .string({
+      required_error: "제목은 필수 값입니다.",
+    })
+    .trim()
+    .min(1, "제목은 빈 값이 될 수 없습니다."),
+  description: z
+    .string({
+      required_error: "자세한 설명은 필수 값입니다.",
+    })
+    .trim()
+    .min(1, "자세한 설명은 빈 값이 될 수 없습니다."),
   price: z.coerce.number({
     required_error: "가격은 필수 값입니다.",
   }),
 });
 
 export const tweetSchema = z.object({
-  photo: z.string({
-    required_error: "이미지는 필수 값입니다.",
-  }),
-  title: z.string({
-    required_error: "제목은 필수 값입니다.",
-  }),
-  description: z.string({
-    required_error: "자세한 설명은 필수 값입니다.",
-  }),
+  photo: z
+    .string({
+      required_error: "이미지는 필수 값입니다.",
+    })
+    .trim()
+    .min(1, "이미지는 빈 값이 될 수 없습니다."),
+  title: z
+    .string({
+      required_error: "제목은 필수 값입니다.",
+    })
+    .trim()
+    .min(1, "제목은 빈 값이 될 수 없습니다."),
+  description: z
+    .string({
+      required_error: "자세한 설명은 필수 값입니다.",
+    })
+    .trim()
+    .min(1, "자세한 설명은 빈 값이 될 수 없습니다."),
 });
+
+export type UploadTweetType = z.infer<typeof tweetSchema>;
 
 export const commentSchema = z
   .string({
     required_error: "코멘트 내용은 필수 값입니다.",
   })
+  .trim()
+  .min(1, "코멘트 빈 값이 될 수 없습니다.")
   .max(200, "코멘트는 최대 200자 입니다.");

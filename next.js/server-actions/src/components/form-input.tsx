@@ -1,24 +1,27 @@
 "use client";
 
-import { HTMLInputTypeAttribute, InputHTMLAttributes, ReactNode } from "react";
+import { ForwardedRef, forwardRef, HTMLInputTypeAttribute, InputHTMLAttributes, ReactNode } from "react";
 import { useFormStatus } from "react-dom";
 
-export default function FormInput({
-  name,
-  type,
-  placeholder,
-  required,
-  errorMessage,
-  label,
-  ...rest
-}: {
-  name: string;
-  type: HTMLInputTypeAttribute;
-  placeholder: string;
-  required: boolean;
-  errorMessage?: string[];
-  label?: ReactNode;
-} & InputHTMLAttributes<HTMLInputElement>) {
+const _Input = (
+  {
+    name,
+    type,
+    placeholder,
+    required,
+    errorMessage,
+    label,
+    ...rest
+  }: {
+    name: string;
+    type: HTMLInputTypeAttribute;
+    placeholder: string;
+    required: boolean;
+    errorMessage?: string;
+    label?: ReactNode;
+  } & InputHTMLAttributes<HTMLInputElement>,
+  ref: ForwardedRef<HTMLInputElement>
+) => {
   const { pending } = useFormStatus();
 
   return (
@@ -28,6 +31,7 @@ export default function FormInput({
           {label}
         </label>
         <input
+          ref={ref}
           type={type}
           id={name}
           className="bg-transparent h-11 pl-9 rounded-3xl w-full text-stone-600 border border-stone-300 focus:outline-none focus:ring transition focus:ring-stone-200 focus:ring-offset-1 placeholder:text-stone-400"
@@ -38,13 +42,9 @@ export default function FormInput({
           {...rest}
         />
       </div>
-      <div className="flex flex-col">
-        {errorMessage?.map((errorMessage) => (
-          <span key={errorMessage} className="pl-1 text-red-400">
-            {errorMessage}
-          </span>
-        ))}
-      </div>
+      <p className="pl-1 text-red-400">{errorMessage}</p>
     </div>
   );
-}
+};
+
+export default forwardRef(_Input);

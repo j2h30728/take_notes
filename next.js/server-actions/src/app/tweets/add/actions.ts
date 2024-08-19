@@ -7,7 +7,7 @@ import db from "@/utils/db";
 import { tweetSchema } from "@/utils/schema";
 import { getSession } from "@/utils/session";
 
-export async function uploadTweet(_: unknown, formData: FormData) {
+export async function uploadTweet(formData: FormData) {
   const data = {
     photo: formData.get("photo"),
     title: formData.get("title"),
