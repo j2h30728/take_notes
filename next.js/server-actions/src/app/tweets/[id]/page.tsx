@@ -2,8 +2,7 @@ import { getSession } from "@/utils/session";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { EyeIcon, ChatBubbleBottomCenterTextIcon } from "@heroicons/react/24/solid";
-
+import { EyeIcon } from "@heroicons/react/24/solid";
 import { UserIcon } from "@heroicons/react/24/solid";
 import db from "@/utils/db";
 import { unstable_cache } from "next/cache";
@@ -11,6 +10,7 @@ import LikeButton from "@/components/like-button";
 import { Prisma } from "@prisma/client";
 import Comments from "@/components/comments";
 import { getUserInfoBySession } from "@/service/userService";
+import UserImage from "@/components/user-image";
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const product = await getTweet(Number(params.id));
@@ -131,13 +131,7 @@ export default async function TweetDetail({ params }: { params: { id: string } }
         <Image className="object-cover" fill src={`${tweet.photo}/public`} alt={tweet.title} />
       </div>
       <div className="p-5 flex items-center gap-3 border-b border-neutral-700">
-        <div className="size-10 rounded-full">
-          {tweet.user.avatar !== null ? (
-            <Image src={`${tweet.user.avatar}/avatar`} width={40} height={40} alt={tweet.user.username} />
-          ) : (
-            <UserIcon />
-          )}
-        </div>
+        <UserImage avatar={tweet.user.avatar} username={tweet.user.username} />
         <div>
           <h3>{tweet.user.username}</h3>
         </div>

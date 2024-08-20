@@ -18,7 +18,7 @@ import {
 
 import TabButton from "./tab-button";
 
-export default function TabBar() {
+export default function TabBar({ username }: { username: string }) {
   const pathname = usePathname();
 
   return (
@@ -53,8 +53,8 @@ export default function TabBar() {
       />
       <TabButton
         title="나의 정보"
-        pathname="/profile"
-        isActive={pathname === "/profile"}
+        pathname={`/users/${username}`}
+        isActive={pathname.includes("users")}
         defaultIcon={<OutlineUserIcon className="size-7" />}
         activeIcon={<SolidUserIcon className="size-7" />}
       />

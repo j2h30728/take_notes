@@ -44,7 +44,6 @@ export default function AddTweets() {
   };
 
   const onSubmit = handleSubmit(async (data: UploadTweetType) => {
-    console.log("data:", data);
     if (!imageFile) return alert("파일이 없다!");
     const cloudflareForm = new FormData();
     cloudflareForm.append("file", imageFile);
