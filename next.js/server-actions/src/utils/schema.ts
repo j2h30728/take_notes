@@ -114,5 +114,13 @@ export const commentSchema = z
     required_error: "코멘트 내용은 필수 값입니다.",
   })
   .trim()
-  .min(1, "코멘트 빈 값이 될 수 없습니다.")
+  .min(1, "코멘트는 빈 값이 될 수 없습니다.")
   .max(200, "코멘트는 최대 200자 입니다.");
+
+export const keywordSchema = z
+  .string({
+    required_error: "검색어는 필수 값입니다.",
+  })
+  .trim()
+  .min(1, "검색어는 빈 값이 될 수 없습니다.")
+  .max(20, "검색어는 최대 20자 입니다.");

@@ -2,6 +2,28 @@
 
 ### 요구사항
 
+#### 과제.7
+
+- Implement the /search page where users should be able to search for tweets by keyword.
+- Implement the /users/[username] page to display the profile of a user and the Tweets the user has posted.
+- If the user is the owner of the profile show a link to the /users/[username]/edit page.
+- In the edit profile page the user should be able to edit the username, email, bio and change password.
+- Use Zod, Server Actions, useOptimistic and revalidatePath.
+- Deploy to Vercel and Vercel Postgres after watching this section.
+
+- 사용자가 키워드로 트윗을 검색할 수 있는 /search 페이지를 구현합니다.
+- 사용자의 프로필과 사용자가 올린 트윗을 표시하는 /users/[username] 페이지를 구현합니다.
+- 사용자가 프로필의 소유자인 경우 /users/[username]/수정 페이지로 연결되는 링크를 표시합니다.
+- 프로필 수정 페이지에서 사용자는 사용자 아이디, 이메일, 자기소개를 수정하고 비밀번호를 변경할 수 있어야 합니다.
+- Zod, 서버 작업, useOptimistic 및 재검증 경로를 사용합니다.
+- 이 섹션을 살펴본 후 Vercel 및 Vercel Postgres에 배포하세요.
+
+#### 과제.6
+
+- `/tweets/[id]` 페이지에서 유저가 트윗에 답글을 추가할 수 있어야 하며 트윗에 좋아요 표시할 수 있어야 합니다.
+- 프리즈마에서 `Response` 모델을 만들고 서버 액션, Zod 유효성 검사, `revalidatePath` 및 `useOptimistic`을 사용합니다.
+- 좋아요와 트윗 답글은 `useOptimistic` 으로 처리해야 합니다.
+
 #### 과제. 5
 
 - `<AddTweet />` 컴포넌트를 만들어 / 페이지 상단에 배치합니다.

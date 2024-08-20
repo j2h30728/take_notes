@@ -24,7 +24,7 @@ export default async function MainPage() {
   );
 }
 async function getInitialTweets() {
-  const tweets = db.tweet.findMany({
+  const tweets = await db.tweet.findMany({
     include: {
       _count: {
         select: {

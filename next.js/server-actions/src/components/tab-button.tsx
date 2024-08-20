@@ -7,11 +7,11 @@ const TabButton = ({
   defaultIcon,
   activeIcon,
 }: {
-  isActive: boolean;
+  isActive?: boolean;
   pathname: string;
   title: string;
   defaultIcon: React.ReactNode;
-  activeIcon: React.ReactNode;
+  activeIcon?: React.ReactNode;
 }) => {
   return (
     <Link href={pathname} className="flex flex-col items-center gap-px">

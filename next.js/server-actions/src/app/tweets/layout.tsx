@@ -1,4 +1,3 @@
-import TabBar from "@/components/tab-bar";
 import TopBar from "@/components/top-bar";
 
 export default function RootLayout({
@@ -9,8 +8,7 @@ export default function RootLayout({
   return (
     <div>
       <TopBar />
-      <div className="pt-11">{children}</div>
-      <TabBar />
+      <div className="pt-12">{children}</div>
     </div>
   );
 }
