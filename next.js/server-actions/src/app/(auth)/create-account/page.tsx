@@ -20,7 +20,7 @@ export default function CreateAccountPage() {
           type="email"
           placeholder="이메일을 입력해주세요."
           required={true}
-          errorMessage={state?.error?.fieldErrors.email}
+          errorMessage={state?.error?.fieldErrors.email?.at(0)}
           label="💌"
         />
         <FormInput
@@ -28,7 +28,7 @@ export default function CreateAccountPage() {
           type="username"
           placeholder="이름을 입력해주세요."
           required={true}
-          errorMessage={state?.error?.fieldErrors.username}
+          errorMessage={state?.error?.fieldErrors.username?.at(0)}
           label="👤"
         />
         <FormInput
@@ -36,7 +36,7 @@ export default function CreateAccountPage() {
           type="password"
           placeholder="비밀번호를 입력해주세요."
           required={true}
-          errorMessage={state?.error?.fieldErrors.password}
+          errorMessage={state?.error?.fieldErrors.password?.at(0)}
           label="🔑"
         />
         <FormButton text="회원가입" />

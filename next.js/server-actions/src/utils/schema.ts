@@ -1,13 +1,7 @@
 import { z } from "zod";
 
 import { PASSWORD_MIN_LENGTH, PASSWORD_REGEX, USERNAME_MIN_LENGTH } from "./contants";
-import {
-  checkEmailAvailability,
-  isEmailExists,
-  checkUsernameAvailability,
-  isUsernameExists,
-  checkUserPassword,
-} from "./validate";
+import { checkEmailAvailability, isEmailExists, checkUsernameAvailability, isUsernameExists } from "./validate";
 
 export const accountSchema = z
   .object({
@@ -23,12 +17,12 @@ export const accountSchema = z
         required_error: "이름은 필수 값입니다.",
       })
       .trim()
-      .min(USERNAME_MIN_LENGTH, "이름은 5글자 이상이어야 합니다."),
+      .min(USERNAME_MIN_LENGTH, "이름은 2글자 이상이어야 합니다."),
     password: z
       .string({
         required_error: "비밀번호는 필수 값입니다.",
       })
-      .min(PASSWORD_MIN_LENGTH, "비밀번호는 10글자 이상이어야 합니다.")
+      .min(PASSWORD_MIN_LENGTH, "비밀번호는 8글자 이상이어야 합니다.")
       .regex(PASSWORD_REGEX, "반드시 1개 이상의 숫자를 포함해야 합니다."),
   })
   .superRefine(async ({ email }, ctx) => {
@@ -130,6 +124,13 @@ export const keywordSchema = z
   .min(1, "검색어는 빈 값이 될 수 없습니다.")
   .max(20, "검색어는 최대 20자 입니다.");
 
+export const aiSchema = z
+  .string({
+    required_error: "내용은 필수 값입니다.",
+  })
+  .trim()
+  .min(1, "내용은 빈 값이 될 수 없습니다.");
+
 export const profileSchema = z
   .object({
     email: z
@@ -144,7 +145,7 @@ export const profileSchema = z
         required_error: "이름은 필수 값입니다.",
       })
       .trim()
-      .min(USERNAME_MIN_LENGTH, "이름은 5글자 이상이어야 합니다."),
+      .min(USERNAME_MIN_LENGTH, "이름은 2글자 이상이어야 합니다."),
     password: z.string({
       required_error: "비밀번호는 필수 값입니다.",
     }),
@@ -152,7 +153,7 @@ export const profileSchema = z
       .string()
       .optional()
       .refine((value) => !value || (value.length >= PASSWORD_MIN_LENGTH && PASSWORD_REGEX.test(value)), {
-        message: "비밀번호는 10글자 이상이어야 하며, 1개 이상의 숫자를 포함해야 합니다.",
+        message: "비밀번호는 8글자 이상이어야 하며, 1개 이상의 숫자를 포함해야 합니다.",
       }),
     bio: z
       .string()

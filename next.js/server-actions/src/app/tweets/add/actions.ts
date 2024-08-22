@@ -6,6 +6,8 @@ import { redirect } from "next/navigation";
 import db from "@/utils/db";
 import { tweetSchema } from "@/utils/schema";
 import { getSession } from "@/utils/session";
+import postOpenAI from "@/service/aiService";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 export async function uploadTweet(formData: FormData) {
   const data = {
@@ -35,6 +37,22 @@ export async function uploadTweet(formData: FormData) {
           },
         },
       },
+    });
+    setImmediate(async () => {
+      const aiMessage = await postOpenAI({
+        description: result.data.description,
+        imageUrl: result.data.photo ? `${result.data.photo}/public` : null,
+      });
+
+      if (aiMessage.content) {
+        await db.aiComment.create({
+          data: {
+            text: aiMessage.content,
+            tweetId: tweet.id,
+            aiBotId: 1,
+          },
+        });
+      }
     });
     redirect(`/tweets/${tweet.id}`);
   }

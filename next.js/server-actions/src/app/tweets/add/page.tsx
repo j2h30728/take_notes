@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useFormState } from "react-dom";
 import { PhotoIcon } from "@heroicons/react/24/solid";
 
 import FormButton from "@/components/form-button";
@@ -20,6 +19,7 @@ export default function AddTweets() {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<UploadTweetType>({
     resolver: zodResolver(tweetSchema),
@@ -56,7 +56,7 @@ export default function AddTweets() {
     formData.append("title", data.title);
     formData.append("description", data.description);
     formData.append("photo", data.photo);
-    return uploadTweet(formData);
+    await uploadTweet(formData);
   });
 
   const onValid = async () => {

@@ -42,5 +42,5 @@ const createAccount = async ({ username, email, password }: { username: string; 
   const cookie = await getSession();
   cookie.id = user.id;
   await cookie.save();
-  redirect("/profile");
+  redirect("/users");
 };

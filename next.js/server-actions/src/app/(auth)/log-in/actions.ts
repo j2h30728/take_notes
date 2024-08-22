@@ -40,7 +40,7 @@ const logIn = async ({ email, password }: { email: string; password: string }) =
     const session = await getSession();
     session.id = user!.id;
     await session.save();
-    redirect("/profile");
+    redirect("/users");
   }
   return {
     data: null,

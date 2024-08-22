@@ -19,7 +19,7 @@ export default function LogInPage() {
           type="email"
           placeholder="이메일을 입력해주세요."
           required={true}
-          errorMessage={state?.error?.fieldErrors.email}
+          errorMessage={state?.error?.fieldErrors.email?.at(0)}
           label="💌"
         />
         <FormInput
@@ -27,7 +27,7 @@ export default function LogInPage() {
           type="password"
           placeholder="비밀번호를 입력해주세요."
           required={true}
-          errorMessage={state?.error?.fieldErrors.password}
+          errorMessage={state?.error?.fieldErrors.password?.at(0)}
           label="🔑"
         />
         <FormButton text="로그인" />
