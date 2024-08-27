@@ -49,4 +49,4 @@
 ### Python
 
 - [Challenges](./python/)
-- [LLM 학습 : FULL STACK-GPT](./python/)
+- [LLM 학습 : FULL STACK-GPT](./python/fullstack-gpt/)
