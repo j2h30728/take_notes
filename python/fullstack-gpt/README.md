@@ -553,3 +553,346 @@ with get_openai_callback() as usage:
 
      - `get_openai_callback()` 함수는 OpenAI API 호출을 추적하는 컨텍스트 매니저 객체를 반환
      - 이 객체는 API 사용량(예: 토큰 수, 비용 등)을 기록하고 추적하는 역할을 한다.
+
+# 5 Memory
+
+## 5.0 [ConversationBufferMemory](https://python.langchain.com/v0.1/docs/modules/memory/types/buffer/) (05:10)
+
+- 이전의 모든 메시지를 저장한 다음 다음 출력 변수로 사용하여 메시지를 추출 가능
+- 채팅 내용이 길어질 수록 메모리가 무한하게 커지고 비용이 크게 부과되어 비효율적이 된다는 단점 존재
+
+```py
+from langchain.memory import ConversationBufferMemory
+
+memory = ConversationBufferMemory()
+memory.save_context({"input": "hi"}, {"output": "whats up"})
+
+memory.load_memory_variables({})
+
+# >>     {'history': 'Human: hi\nAI: whats up'}
+
+```
+
+메시지 목록으로도 가져올 수 있다. (채팅 모델에서 유용)
+
+```py
+memory = ConversationBufferMemory(return_messages=True)
+memory.save_context({"input": "hi"}, {"output": "whats up"})
+
+memory.load_memory_variables({})
+
+# >>     {'history': [HumanMessage(content='hi', additional_kwargs={}),
+# >>      AIMessage(content='whats up', additional_kwargs={})]}
+```
+
+### verbose
+
+- 체인 사용시, 프로픔트를 볼 수 있는 옵션
+  - **True** : 표준 출력
+  - **0** : 출력하지 않음
+  - **1** : 자세히 정보를 출력
+  - **2** : 함축적인 정보를 출력
+
+```py
+
+from langchain_openai import OpenAI
+from langchain.chains import ConversationChain
+
+
+llm = OpenAI(temperature=0)
+conversation = ConversationChain(
+    llm=llm,
+    verbose=True,
+    memory=ConversationBufferMemory()
+)
+```
+
+## 5.1 [ConversationBufferWindowMemory](https://python.langchain.com/docs/modules/memory/types/buffer_window) (03:14)
+
+- 시간에 따른 대화의 상호 작용 목록을 유지합니다. 마지막 K개의 상호 작용만 사용
+- 이는 버퍼가 너무 커지지 않도록 가장 최근 상호 작용의 슬라이딩 윈도우를 유지합니다.
+
+```py
+from langchain.memory import ConversationBufferWindowMemory
+
+memory = ConversationBufferWindowMemory( k=1) #슬라이딩 윈도우 크기 1, 마지막 1개의 interactions만 메모리에 유지하도록 한다.
+memory.save_context({"input": "hi"}, {"output": "whats up"})
+memory.save_context({"input": "not much you"}, {"output": "not much"})
+
+memory.load_memory_variables({})
+
+# >>     {'history': 'Human: not much you\nAI: not much'}
+
+```
+
+- 슬라이딩 윈도우의 크기를 1로 잡았기 때문에 먼저 저장한 `{"input": "hi"}, {"output": "whats up"}`는 제거되었다.
+
+## 5.2 [ConversationSummaryMemory](https://js.langchain.com/docs/modules/memory/how_to/summary) (03:38) [실습코드](./notes/5.2.ipynb)
+
+- 대화가 진행됨에 따라 대화를 요약하여 저장합니다.
+- 긴 대화의 경우, 이전 대화 내용을 요약된 형태로 기억하고, 이를 바탕으로 대화를 이어갈 수 있다.
+- 대화가 길어질 때 모든 메시지를 그대로 기억하는 대신, 요약된 형태로 저장하여 토큰 사용을 최적화한다.
+
+```py
+from langchain.memory import ConversationSummaryMemory
+from langchain.chat_models import ChatOpenAI
+
+llm = ChatOpenAI(openai_api_key=api_key,model="gpt-4o-mini")
+memory = ConversationSummaryMemory(llm=llm)
+
+def add_message(input, output):
+    memory.save_context({"input": input}, {"output": output})  # 대화 저장
+
+def get_history():
+    return memory.load_memory_variables({}) # 저장한 대화를 모두 표시
+
+
+add_message("안녕, 난 담이야, 난 서울에서 살아", "와! 멋있는데")
+
+
+```
+
+## 5.3 [ConversationSummaryBufferMemory](https://python.langchain.com/v0.1/docs/modules/memory/types/summary_buffer/) (03:32) [실습코드](./notes/5.3.ipynb)
+
+- ConversationBufferMemory와 ConversationBufferWindowMemory, 두 가지 아이디어를 결합한 것
+- 대화의 최근 기록을 메모리에 유지하면서도, 메모리의 용량이 넘치지 않도록 관리하는 역할
+- **버퍼 유지**: 대화의 최근 상호작용(예: 최근 대화 몇 줄)은 메모리에 그대로 유지된다. 이 버퍼는 대화의 연속성을 유지하기 위해 필요.
+- **플러시와 요약**:
+  - 메모리 또는 버퍼의 크기가 설정된 한계를 초과하면(이 경우 `max_token_limit=150`), 가장 오래된 대화 기록이 제거되거나 요약된다. 이렇게 하면 메모리의 용량을 초과하지 않으면서도, 중요한 정보는 유지할 수 있다.
+  - 제거된 대화는 단순히 지워지는 것이 아니라 요약된 형태로 컴파일되어 저장된다. 이렇게 하면 중요한 정보는 간략하게 유지되면서도, 메모리 사용량을 최소화할 수 있다.
+- **슬라이딩 윈도우**:
+  - "슬라이딩 윈도우"는 일정한 크기의 윈도우(시간 또는 데이터의 구간) 내에서 데이터를 관리하는 방식
+  - 이 경우, 가장 오래된 데이터를 제거하고 새 데이터를 추가하는 방식으로 관리된다.
+
+```py
+from langchain.memory import ConversationSummaryBufferMemory
+from langchain_openai import OpenAI
+
+llm = OpenAI()
+
+memory = ConversationSummaryBufferMemory(
+    llm=llm,
+    max_token_limit=150, # 플러시할 시기를 결정하는 최대 토큰 크기 : 이상이 넘어가면 슬라이딩 윈도우기반으로 저장한지 제일 오래된 것 부터 제거 함
+    return_messages=True # 프롬프트를 표시
+    )
+```
+
+## 5.4 [ConversationKGMemory](https://python.langchain.com/docs/modules/memory/types/summary_buffer) (03:52) [실습코드](./notes/5.4.ipynb)
+
+- 대화 내용 엔티티의 KG(knowledge graph) 를 만들어 중요한 요약본을 생성하여 메모리에 저장하는 방식
+
+```py
+from langchain.memory import ConversationKGMemory
+
+llm = ChatOpenAI(openai_api_key=api_key,temperature=0.1,model="gpt-4o-mini")
+
+memory = ConversationKGMemory(
+    llm=llm,
+    return_messages=True,
+)
+
+
+def add_message(input, output):
+    memory.save_context({"input": input}, {"output": output})
+
+add_message("담은 김치를 좋아해.", "와! 멋있는데!")
+memory.load_memory_variables({"inputs": "담은 뭐를 좋아해?"})
+# >> {'history': [SystemMessage(content='On 담: 담 좋아해 김치.')]}
+```
+
+## 5.5 [Memory on LLMChain](https://python.langchain.com/v0.1/docs/modules/memory/types/summary_buffer/#using-in-a-chain) (08:47)
+
+- [Initiate the LLMChain](https://python.langchain.com/v0.1/docs/integrations/llms/deepinfra/#initiate-the-llmchain)
+
+```py
+llm = ChatOpenAI(openai_api_key=api_key,temperature=0.1)
+
+memory = ConversationSummaryBufferMemory(
+    llm=llm,
+    max_token_limit=120, # 요약을 시작하는 토근 수의 한계
+    memory_key="chat_history", # 사용자 정의 키 : 대화 기록을 저장하는 키, 대화의 모든 상호작용은 chat_history에 저장된다
+)
+
+# 프롬프트 템플릿
+template = """
+    You are a helpful AI talking to a human.
+
+    {chat_history}  # 여기도 memory_key에 맞춰 변경
+    Human:{question}
+    You:
+"""
+
+chain = LLMChain(
+    llm=llm,
+    memory=memory,
+    prompt=PromptTemplate.from_template(template),
+    verbose=True,
+)
+
+
+chain.predict(question="제 이름은 담입니다.")
+
+# > Entering new LLMChain chain...
+# Prompt after formatting:
+
+#     You are a helpful AI talking to a human.
+
+
+#     Human:제 이름은 담입니다.
+#     You:
+
+
+# > Finished chain.
+# '안녕하세요, 담님. 무엇을 도와드릴까요?'
+```
+
+### ConversationSummaryBufferMemory의 memory_key
+
+- **memory_key의 역할**:
+
+  - memory_key는 대화 기록이 저장되는 위치를 지정하는 데 사용된다.
+  - 이 키는 프롬프트 템플릿에서 {memory_key}로 참조되며, 실제 대화 기록이 이 키에 저장된 내용으로 대체된다.
+
+- **사용자가 지정 가능**: memory_key는 사용자 정의가 가능.
+
+- **프롬프트 템플릿과의 연결**:
+  - 이 키는 프롬프트 템플릿과 연동되어 작동
+  - 예를 들어, 프롬프트 템플릿에서 {chat_history}라는 변수로 대화 기록을 불러오도록 지정했다면, memory_key는 "chat_history"로 설정되어야 한다. 이 키를 다른 이름으로 변경하면, 프롬프트 템플릿에서도 해당 이름으로 맞춰야 한다.
+
+## 5.6 Chat Based Memory (04:03)
+
+### [MessagesPlaceholder](https://python.langchain.com/v0.1/docs/modules/model_io/prompts/quick_start/#messagesplaceholder)
+
+- LangChain은 포맷하는 동안 렌더링할 메시지를 완전히 제어할 수 있는 메시지플레이스홀더를 제공
+- 메시지 프롬프트 템플릿에 어떤 역할을 사용해야 할지 확실하지 않거나 서식 지정 중에 메시지 목록을 삽입하려는 경우 유용할 수 있다.
+
+#### 흐름
+
+1. 메모리 생성:
+   - `ConversationSummaryBufferMemory`는 대화의 요약을 관리
+   - `return_messages=True`를 통해 개별 메시지로 된 기록을 유지
+2. 프롬프트 템플릿 생성:
+   - `ChatPromptTemplate.from_messages`는 프롬프트에서 대화 기록이 삽입될 위치를 `MessagesPlaceholder`로 지정
+3. 체인 실행:
+   - 대화의 기록이 `MessagesPlaceholder`에 전달되고, 이전 대화의 컨텍스트가 유지된 상태로 새로운 입력(예: 질문 "제 이름은 담입니다.")에 대한 응답을 생성
+
+- **`return_messages=True`**:
+  - 개별 메시지 객체들의 리스트가 반환
+  - 대화의 각 메시지가 분리된 상태로 유지
+  - 이를 통해 MessagesPlaceholder와 같은 템플릿에서 개별 메시지를 다룰 수 있다.
+- **`return_messages=False`**:
+  - 대화의 전체 기록이 하나의 요약된 텍스트 문자열로 반환
+  - 대화의 주요 내용을 간결하게 표현하며, 프롬프트에 삽입될 때도 하나의 문자열로 처리된다.
+
+```py
+from langchain.memory import ConversationSummaryBufferMemory
+from langchain.chat_models import ChatOpenAI
+from langchain.chains import LLMChain
+from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
+
+llm = ChatOpenAI(openai_api_key=api_key,temperature=0.1)
+
+memory = ConversationSummaryBufferMemory(
+    llm=llm,
+    max_token_limit=120,
+    memory_key="chat_history",
+    return_messages=True # 개별 메시지 객체들의 리스트가 반환, MessagesPlaceholder에서 개별 메시지로 다룰 수 있다.
+)
+
+
+prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", "You are a helpful AI talking to a human"),
+        MessagesPlaceholder(variable_name="chat_history"),
+        ("human", "{question}"),
+    ]
+)
+chain = LLMChain(
+    llm=llm,
+    memory=memory,
+    prompt=prompt,
+    verbose=True,
+)
+
+
+chain.predict(question="제 이름은 담입니다.")
+
+
+```
+
+## 5.7 LCEL Based Memory (07:38)
+
+```py
+llm = ChatOpenAI(openai_api_key=api_key,temperature=0.1)
+
+memory = ConversationSummaryBufferMemory(
+    llm=llm,
+    max_token_limit=120,
+    return_messages=True
+)
+
+# ChatPromptTemplate을 사용하여 대화의 프롬프트 템플릿 정의(시스템 메시지, 대화 기록_MessagesPlaceholder , 사용자 질문으로 구성됨)
+prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", "You are a helpful AI talking to a human"),
+        MessagesPlaceholder(variable_name="history"),
+        ("human", "{question}"),
+    ]
+)
+
+# 현재 메모리에 저장된 대화기록을 불러와 반환. history는 변수에 할당한다.
+def load_memory(_):
+    return memory.load_memory_variables({})["history"]
+
+# LCEL 방식으로 체인 구성
+# 1. RunnablePassthrough.assign(history=load_memory)으로 load_memory 함수를 실행시켜 반한괎을 history 에 할당하고 prompt에 전달
+# 2. 프롬프트 템플릿 바탕으로 최종 프롬프트 생성, 이를 언어 모델(llm)에 전달하여 응답을 생성
+chain = RunnablePassthrough.assign(history=load_memory) | prompt | llm
+
+
+def invoke_chain(question):
+    result = chain.invoke({"question": question}) # 사용자의 질문을 받아 체인을 실행
+    memory.save_context( # 생성된 응답을 메모리에 저장하여 대화 기록 업데이트
+        {"input": question},
+        {"output": result.content},
+    )
+    print(result)
+
+invoke_chain("제 이름은 담입니다.")
+```
+
+## 5.8 Recap (04:57)
+
+### LCEL (LangChain Execution Language)
+
+- **주된 특징**: LCEL은 `|` 연산자를 사용하여 여러 작업을 **체이닝**(chaining)합니다. 각 작업은 `Runnable` 인터페이스를 구현하며, 이를 통해 다양한 실행 단계를 연결할 수 있습니다.
+- **체이닝 방식**: `|` 연산자를 사용하여 여러 `Runnable` 객체를 연결합니다. 각 단계의 출력이 다음 단계의 입력으로 전달됩니다.
+- **유연성**: LCEL은 더 유연한 방식으로 여러 가지 작업을 연결할 수 있으며, 각 작업은 독립적으로 실행되고 결합됩니다. 이는 복잡한 워크플로우나 다양한 입력 및 출력 구조를 필요로 할 때 매우 유용합니다.
+
+  ```python
+  chain = RunnablePassthrough.assign(history=load_memory) | prompt | llm
+  ```
+
+  여기서 `RunnablePassthrough`, `prompt`, `llm`은 각각의 실행 단계로 연결되어 있으며, `|` 연산자를 통해 순차적으로 실행됩니다.
+
+### `LLMChain`
+
+- **주된 특징**: `LLMChain`은 LangChain에서 제공하는 특정 체인 구조로, 언어 모델(LLM)을 사용하여 프롬프트를 처리하고 결과를 생성하는 데 중점을 둡니다.
+- **메서드 연결**: `LLMChain`은 특정 속성(`llm`, `prompt`, `memory`)을 초기화 시점에 설정하고, 이러한 속성들을 사용하여 체인 내에서 데이터를 처리합니다.
+- **상호작용 방식**: `LLMChain`은 주로 `predict`, `invoke`, `run` 등의 메서드를 통해 입력을 처리하고 결과를 생성합니다. 이 방식은 구조화된 프로세스를 따르며, 특정 워크플로우를 구현하는 데 적합합니다.
+
+  ```python
+  chain = LLMChain(
+      llm=llm,
+      memory=memory,
+      prompt=prompt,
+      verbose=True,
+  )
+  ```
+
+  이 경우, `LLMChain`은 언어 모델(`llm`), 메모리(`memory`), 프롬프트(`prompt`) 등을 초기화 시점에 설정하고, 이후 메서드를 통해 체인 작업을 수행합니다.
+
+### 요약
+
+- **LCEL**: `|` 연산자를 사용해 여러 실행 단계를 체이닝하여 복잡한 워크플로우를 구성하는 방식입니다. 유연성과 확장성이 뛰어나며, 다양한 `Runnable` 객체를 연결할 수 있습니다.
+- **LLMChain**: LangChain에서 제공하는 구조화된 체인으로, 주로 언어 모델과의 상호작용을 중심으로 프롬프트를 처리하고 결과를 생성하는 데 사용됩니다. 메서드를 통해 설정된 속성들을 이용해 작업을 처리합니다.
