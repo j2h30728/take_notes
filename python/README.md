@@ -1,6 +1,6 @@
 # Python
 
-## [FULLSTACK-GPT : LLM](./fullstack-gpt/)
+## [FULLSTACK-GPT : LLM](./gpt/)
 
 #### [#3 랭체인 기초](./fullstack-gpt/README.md#3-welcome-to-langchain)
 

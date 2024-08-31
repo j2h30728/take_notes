@@ -38,7 +38,7 @@ $ source <venv>/bin/activate
 - requirements.txt 추가
 
 ```bash
-$ pip3 install -r requirements
+$ pip3 install -r requirements.txt
 ```
 
 4. 가상환경 확인
@@ -556,7 +556,7 @@ with get_openai_callback() as usage:
 
 # 5 Memory
 
-## 5.0 [ConversationBufferMemory](https://python.langchain.com/v0.1/docs/modules/memory/types/buffer/) (05:10)
+## 5.0 ConversationBufferMemory (05:10)
 
 - 이전의 모든 메시지를 저장한 다음 다음 출력 변수로 사용하여 메시지를 추출 가능
 - 채팅 내용이 길어질 수록 메모리가 무한하게 커지고 비용이 크게 부과되어 비효율적이 된다는 단점 존재
