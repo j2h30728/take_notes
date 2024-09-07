@@ -897,7 +897,7 @@ invoke_chain("제 이름은 담입니다.")
 - **LCEL**: `|` 연산자를 사용해 여러 실행 단계를 체이닝하여 복잡한 워크플로우를 구성하는 방식입니다. 유연성과 확장성이 뛰어나며, 다양한 `Runnable` 객체를 연결할 수 있습니다.
 - **LLMChain**: LangChain에서 제공하는 구조화된 체인으로, 주로 언어 모델과의 상호작용을 중심으로 프롬프트를 처리하고 결과를 생성하는 데 사용됩니다. 메서드를 통해 설정된 속성들을 이용해 작업을 처리합니다.
 
-# 6 RAG
+# 6 [RAG](https://python.langchain.com/v0.2/docs/tutorials/rag/)
 
 ## 6.0 Introduction (04:20)
 
@@ -984,8 +984,829 @@ loader.load_and_split(text_splitter=splitter)
 
 ## 6.7 Recap (05:17)
 
+```py
+# 필요한 라이브러리와 모듈 가져오기
+from langchain.chat_models import ChatOpenAI  # OpenAI API를 사용해 답변을 생성하는 LLM 모듈
+from langchain.document_loaders import UnstructuredFileLoader  # 문서를 불러오는 모듈
+from langchain.text_splitter import CharacterTextSplitter  # 문서를 작은 덩어리로 분할하는 모듈
+from langchain.embeddings import OpenAIEmbeddings, CacheBackedEmbeddings  # 문서를 벡터로 변환하고 캐싱하는 모듈
+from langchain.vectorstores import FAISS  # 벡터 검색을 위한 저장소 (FAISS)
+from langchain.storage import LocalFileStore  # 로컬 파일 시스템에 데이터를 저장하는 모듈
+from langchain.chains import RetrievalQA  # 질문에 대한 답변을 생성하는 체인 모듈
+
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+api_key = os.getenv("OPENAI_API_KEY")  # OpenAI API 키 불러오기
+
+# OpenAI 언어 모델(LLM) 설정
+llm = ChatOpenAI(openai_api_key=api_key)
+
+# 캐시 데이터를 로컬 파일 시스템에 저장할 디렉터리 설정
+cache_dir = LocalFileStore("./.cache/")
+
+# 문서를 분할하는 설정: 문서를 600자씩 나누고 100자의 중복을 유지
+splitter = CharacterTextSplitter.from_tiktoken_encoder(
+    separator="\n",  # 줄바꿈을 기준으로 분할
+    chunk_size=600,  # 한 번에 처리할 문서 조각의 크기
+    chunk_overlap=100  # 문서 조각 간 중복 크기
+)
+
+# 문서 파일을 로드 (여기서는 텍스트 파일을 불러옴)
+loader = UnstructuredFileLoader("../files/chapter_one.txt")
+
+# 문서를 불러온 후, splitter를 사용해 문서를 작은 조각으로 나누기
+docs = loader.load_and_split(text_splitter=splitter)
+
+# OpenAI 임베딩 모델을 사용해 문서 조각들을 벡터 형식으로 변환
+embeddings = OpenAIEmbeddings()
+
+# 캐싱된 임베딩을 사용해, 이미 처리된 임베딩 결과를 재사용 가능하게 설정
+cached_embeddings = CacheBackedEmbeddings.from_bytes_store(embeddings, cache_dir)
+
+# FAISS 벡터 스토어에 문서 조각과 임베딩을 저장해, 나중에 유사한 문서를 빠르게 검색 가능하게 함
+vectorstore = FAISS.from_documents(docs, cached_embeddings)
+
+# 검색된 문서와 질문을 연결해 답변을 생성하는 체인 구성
+chain = RetrievalQA.from_chain_type(
+    llm=llm,  # OpenAI의 언어 모델을 사용
+    chain_type="map_rerank",  # 검색된 문서를 다시 정렬하는 방식으로 답변 생성
+    retriever=vectorstore.as_retriever(),  # 문서 검색을 위한 도구로 FAISS 사용
+)
+
+# "Victory Mansions"에 대한 설명을 요청하고, 체인에서 답변을 생성
+chain.run("Describe Victory Mansions")
+
+
+```
+
+### **임베딩(Embedding)이란?**
+
+임베딩은 **텍스트나 이미지 같은 고차원 데이터를 고정된 크기의 숫자 벡터로 변환하는 과정**을 말합니다. 자연어 처리에서 임베딩은 단어, 문장 또는 문서 등의 텍스트 데이터를 벡터 공간에 매핑하여 컴퓨터가 수학적으로 처리할 수 있도록 합니다.
+
+- **예:** "apple"과 "fruit"는 서로 관련성이 높으므로, 두 단어의 임베딩은 벡터 공간에서 가까운 위치에 있습니다. 반면, "apple"과 "car"는 관련성이 적어, 벡터 공간에서 멀리 떨어져 있습니다.
+
+임베딩의 목적은 **의미적으로 비슷한 데이터가 벡터 공간에서 가까이 위치하도록 하는 것**입니다.
+
+### **벡터(Vector) 형식이란?**
+
+벡터는 숫자의 배열(리스트)입니다. 컴퓨터가 데이터를 처리할 때 숫자를 기반으로 계산을 하므로, 텍스트 데이터를 벡터로 변환하는 것이 중요합니다. 벡터는 다차원 공간에서 좌표를 나타내며, 이를 통해 텍스트 간의 유사성을 측정할 수 있습니다.
+
+- **예:** 단어 "apple"이 [0.1, 0.7, 0.3]라는 벡터로 표현될 수 있습니다. 벡터가 길거나 짧을 수 있지만, 중요한 것은 벡터들이 표현하는 차원이 고정되어 있다는 것입니다.
+
+### **코드가 하려는 것: Retrieval Augmented Generation (RAG)**
+
+이 코드는 **Retrieval Augmented Generation (RAG)** 방식을 사용하여 질문에 답변을 생성하는 작업을 수행하려고 합니다. RAG는 **검색된 정보와 대형 언어 모델(LLM)을 결합하여 답변을 생성하는 방식**입니다.
+
+RAG의 주요 단계는 다음과 같습니다:
+
+1. **문서 로드 및 분할:**
+   먼저, 문서를 로드한 후 `CharacterTextSplitter`를 사용해 **긴 문서를 작은 덩어리**로 나눕니다. 이렇게 나눈 이유는 LLM이 한 번에 처리할 수 있는 텍스트 양에 제한이 있기 때문입니다. 이 과정에서 각 덩어리가 겹치게 하여 문맥을 잃지 않도록 합니다.
+
+2. **임베딩 생성:**
+   텍스트 조각들을 **벡터로 변환(임베딩)**합니다. OpenAI 임베딩 모델을 사용하여 각 문서 조각을 벡터 공간에 매핑합니다. 이렇게 변환된 벡터는 수학적으로 **의미적으로 가까운 텍스트**를 찾는 데 유용합니다.
+
+3. **벡터 스토어 저장:**
+   임베딩된 벡터들은 **FAISS 벡터 스토어**에 저장됩니다. FAISS는 효율적으로 유사한 벡터(텍스트 조각)를 검색할 수 있는 도구입니다. 이를 통해 나중에 질문과 관련된 텍스트 조각을 빠르게 검색할 수 있습니다.
+
+4. **검색 및 답변 생성:**
+   질문이 들어오면, 해당 질문을 벡터로 변환한 후 **유사한 문서 조각을 검색**합니다. 이 검색된 문서 조각들을 기반으로 LLM(OpenAI)을 통해 **답변을 생성**합니다. 이 과정에서 유사한 문서 조각들이 LLM에 전달되고, 이를 바탕으로 답변이 생성됩니다.
+
+---
+
+### **단계별 원리 설명**
+
+1. **문서 로드 및 분할 (Text Splitting)**:
+
+   ```python
+   splitter = CharacterTextSplitter.from_tiktoken_encoder(
+       separator="\n",  # 줄바꿈을 기준으로 분할
+       chunk_size=600,  # 각 조각의 크기는 600자
+       chunk_overlap=100  # 100자 겹치게 하여 문맥을 유지
+   )
+   loader = UnstructuredFileLoader("../files/chapter_one.txt")
+   docs = loader.load_and_split(text_splitter=splitter)
+   ```
+
+   여기서 문서가 불러와지고, 각 문서가 작은 조각으로 나눠집니다. 각 조각은 600자의 크기로 나누되, 100자의 겹침 부분이 있어 문서의 흐름이 끊기지 않도록 합니다.
+
+2. **임베딩 생성 (Embedding Creation)**:
+
+   ```python
+   embeddings = OpenAIEmbeddings()
+   cached_embeddings = CacheBackedEmbeddings.from_bytes_store(embeddings, cache_dir)
+   ```
+
+   각 텍스트 조각을 벡터로 변환하는데, OpenAI의 임베딩 모델을 사용합니다. 캐시를 통해 한 번 계산된 임베딩을 재사용할 수 있도록 설정하여 성능을 최적화합니다.
+
+3. **벡터 스토어 저장 (Vector Store Saving)**:
+
+   ```python
+   vectorstore = FAISS.from_documents(docs, cached_embeddings)
+   ```
+
+   생성된 임베딩(벡터)을 FAISS 벡터 스토어에 저장합니다. FAISS는 고성능 벡터 검색 도구로, 이후에 관련된 문서 조각을 빠르게 검색하는 데 사용됩니다.
+
+4. **검색 및 답변 생성 (Search and Answer Generation)**:
+   ```python
+   chain = RetrievalQA.from_chain_type(
+       llm=llm,
+       chain_type="map_rerank",
+       retriever=vectorstore.as_retriever(),
+   )
+   chain.run("Describe Victory Mansions")
+   ```
+   "Victory Mansions"라는 질문이 들어오면, 해당 질문과 관련된 문서 조각을 FAISS를 통해 검색하고, 검색된 문서 조각을 OpenAI LLM에 전달하여 최종 답변을 생성합니다.
+
+---
+
 ## 6.8 Stuff LCEL Chain (10:13)
 
 ## 6.9 Map Reduce LCEL Chain (19:48)
 
 ## 6.10 Recap (07:26)
+
+# 7 DocumentGPT
+
+## 7.0 Introduction (05:01)
+
+### [**Streamlit이란?**](https://docs.streamlit.io/)
+
+- Streamlit은 머신 러닝과 데이터 과학을 위한 웹 애플리케이션을 쉽고 빠르게 만들 수 있는 오픈 소스 Python 라이브러리
+- 특히, 데이터 시각화와 상호작용을 위한 기능을 제공하여, 별도의 웹 개발 지식 없이도 손쉽게 데이터 애플리케이션을 구축하고 배포할 수 있다.
+
+### **Streamlit의 장점**
+
+- **빠르고 쉬운 배포:** 몇 분 만에 데이터 기반 웹 앱을 만들고 배포할 수 있다.
+- **상호작용 지원:** 대화형 위젯, 슬라이더, 차트 등을 통해 사용자와 상호작용할 수 있는 앱을 만들 수 있다.
+- **다중 페이지 지원:** 한 애플리케이션에 여러 페이지를 추가해 앱을 확장할 수 있다.
+
+```py
+import streamlit as st
+
+# Display text in title formatting.
+st.title("Hello world!")
+
+# Display text in subheader formatting.
+st.subheader("Welcome to Streamlit!")
+
+# Display string formatted as Markdown.
+st.markdown(
+    """
+    #### I love it!
+"""
+)
+```
+
+## 7.1 [Magic](https://docs.streamlit.io/library/get-started/create-an-app) (06:31)
+
+```py
+
+# Display a select widget.
+st.selectbox(
+    "Choose your model",
+    (
+        "GPT-3",
+        "GPT-4",
+    ),
+)
+```
+
+## 7.2 [Data Flow](https://docs.streamlit.io/library/get-started/main-concepts) (06:18)
+
+streamlit은 데이터가 변경될 때 전체 함수가 재실행 된다.
+
+```py
+import streamlit as st
+from datetime import datetime
+
+# 상호작용할 때마다 시간이 변경되는 것을 확인할 수 있다.
+today = datetime.today().strftime("%H:%M:%S")
+
+st.title(today)
+
+# 셀렉트에서 선택한 model이 값으로 들어감
+model = st.selectbox(
+    "[LABEL] 모델을 선택하세요.",
+    (
+        "GPT-3",
+        "GPT-4",
+    ),
+)
+
+# GPT-3을 선택했을 때
+if model == "GPT-3":
+    st.write("저렴한 모델") # 보여지는 텍스트
+# GPT-4를 선택했을 떄
+else:
+    st.write("저렴 하지않은 모델")
+    name = st.text_input("니 이름이 머고?") # input 창 표시
+    st.write(name) # input 창에서 입력하고 enter 한 값이 표시됨
+
+    # slider input
+    value = st.slider(
+        "슬라이더; 최소 0.1/최대1.0",
+        min_value=0.1,
+        max_value=1.0,
+    )
+
+    st.write(value)
+
+```
+
+#### `strftime`
+
+- Format using strftime().
+- Example: "%d/%m/%Y, %H:%M:%S"
+
+## 7.3 [Multi Page](https://docs.streamlit.io/library/get-started/multipage-apps) (07:08)
+
+### Page
+
+- 페이지는 `pages/` 디렉터리에 있는 `.py` 파일로 정의된다.
+- 페이지의 파일 이름은 아래 섹션의 규칙을 기반으로 사이드바에서 페이지 이름으로 변환됩니다.
+- 예를 들어 About.py 파일은 사이드바에서 "About"으로 나타나며, 2*Page_two.py는 "Page two"로 나타나며, 3*😎_three.py는 "😎 three"로 나타낸다.
+
+```py
+import streamlit as st
+
+# Configures the default settings of the page.
+st.set_page_config(
+    page_title="FullstackGPT Home",
+    page_icon="🤖",
+)
+
+st.markdown(
+    """
+# Hello!
+
+Welcome to my FullstackGPT Portfolio!
+
+Here are the apps I made:
+
+- [ ] [DocumentGPT](/DocumentGPT)
+- [ ] [PrivateGPT](/PrivateGPT)
+- [ ] [QuizGPT](/QuizGPT)
+- [ ] [SiteGPT](/SiteGPT)
+- [ ] [MeetingGPT](/MeetingGPT)
+- [ ] [InvestorGPT](/InvestorGPT)
+"""
+)
+
+```
+
+## 7.4 Chat Messages (14:10)
+
+### [Session State](https://docs.streamlit.io/library/api-reference/session-state)
+
+- 세션 상태는 각 사용자 세션에 대해 변수를 다시 실행 간에 공유하는 방법
+- 상태를 저장하고 유지할 뿐만 아니라, Streamlit은 Callbacks를 사용하여 상태를 조작하는 기능도 제공
+- 세션 상태는 또한 다중 페이지 앱 내에서 앱 간에 지속된다.
+
+```py
+import time
+import streamlit as st
+
+st.set_page_config(
+    page_title="DocumentGPT",
+    page_icon="📃",
+)
+
+st.title("DocumentGPT")
+
+# session_state에 메시지가 없을 경우에 빈 배열로 초기화 (첫 대화는 빈 배열)
+if "messages" not in st.session_state:
+    st.session_state["messages"] = []
+
+# role = human | ai
+def send_message(message, role, save=True):
+    with st.chat_message(role):
+        st.write(message)
+    if save: # 채팅로그로 저장하는 지
+        st.session_state["messages"].append({"message": message, "role": role})
+
+
+for message in st.session_state["messages"]:
+    send_message(
+        message["message"],
+        message["role"],
+        save=False, # 이미 저장되어있기 때문에 st.write로 렌더링만 함
+    )
+
+
+message = st.chat_input("Send a message to the ai ")
+
+if message:
+    send_message(message, "human")
+    time.sleep(2)
+    send_message(f"You said: {message}", "ai")
+
+    with st.sidebar: # 사이드바에 추가
+        st.write(st.session_state) # session_state에 저장된 값을 보여준다.(저장된 채팅로그 렌더)
+
+```
+
+## 7.5 Recap (04:39)
+
+## 7.6 Uploading Documents (13:23)
+
+## 7.7 Chat History (11:17)
+
+### `@st.cache_data(show_spinner="Embedding file...")`
+
+- `@st.cache_data(show_spinner="Embedding file...")`는 **Streamlit** 라이브러리에서 사용하는 **데코레이터**
+- 이 데코레이터는 특정 함수의 결과를 **캐싱**(저장)하여, 동일한 입력 값으로 함수가 다시 호출될 때 **다시 계산하지 않고** 저장된 결과를 반환하도록 한다.
+
+### 주요 기능
+
+1. **캐싱**:
+
+   - `@st.cache_data`는 **함수의 출력 값을 캐싱**
+   - 만약 동일한 입력값으로 다시 호출되면, 저장된 값을 반환하여 불필요한 계산을 방지
+   - 예를 들어, 큰 파일을 임베딩하는 작업은 시간이 오래 걸릴 수 있는데, 이 데코레이터를 사용하면 처음 한 번만 임베딩을 하고, 이후 같은 파일을 처리할 때는 저장된 임베딩을 빠르게 반환할 수 있다.
+
+2. **show_spinner**:
+   - `show_spinner="Embedding file..."`는 **스피너**를 화면에 표시하여 함수가 실행 중일 때 사용자에게 **시각적인 피드백**을 준다.
+   - 함수가 실행되는 동안 "Embedding file..."이라는 메시지와 함께 로딩 애니메이션이 화면에 나타난다. 이는 사용자가 작업이 진행 중임을 알 수 있게 해준다.
+
+### 예시
+
+```python
+@st.cache_data(show_spinner="Embedding file...")
+def embed_file(file):
+    # 파일을 읽고, 임베딩 처리하는 작업
+    ...
+```
+
+> streamlit은 사용자의 상호작용이 일어날 때마다 전체 코드를 재실행하기 때문이다.
+> 이때, `@st.cache_data(show_spinner="Embedding file...")` 데코레이터를 사용하여 리소스 및 시간이 많이 필요로 하는 작업(임베딩 작업)을 해놓은 작업을 캐싱해두어 재실행을 막는것이다.
+
+```py
+import time
+from langchain.document_loaders import UnstructuredFileLoader
+from langchain.embeddings import CacheBackedEmbeddings, OpenAIEmbeddings
+from langchain.storage import LocalFileStore
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.vectorstores.faiss import FAISS
+import streamlit as st
+
+import os
+
+
+
+st.set_page_config(
+    page_title="DocumentGPT",
+    page_icon="📃",
+)
+
+
+@st.cache_data(show_spinner="Embedding file...")
+def embed_file(file):
+    file_content = file.read()
+
+    # 파일을 저장할 경로를 생성합니다.
+    file_dir = "./.cache/files"
+    os.makedirs(file_dir, exist_ok=True)  # 디렉토리가 없으면 생성
+
+
+    file_path = f"./.cache/files/{file.name}"
+    with open(file_path, "wb") as f:
+        f.write(file_content)
+    cache_dir = LocalFileStore(f"./.cache/embeddings/{file.name}")
+    splitter = CharacterTextSplitter.from_tiktoken_encoder(
+        separator="\n",
+        chunk_size=600,
+        chunk_overlap=100,
+    )
+    loader = UnstructuredFileLoader(file_path)
+    docs = loader.load_and_split(text_splitter=splitter)
+    embeddings = OpenAIEmbeddings()
+    cached_embeddings = CacheBackedEmbeddings.from_bytes_store(embeddings, cache_dir)
+    vectorstore = FAISS.from_documents(docs, cached_embeddings)
+    retriever = vectorstore.as_retriever()
+    return retriever
+
+
+def send_message(message, role, save=True):
+    with st.chat_message(role):
+        st.markdown(message)
+    if save:
+        st.session_state["messages"].append({"message": message, "role": role})
+
+
+def paint_history():
+    for message in st.session_state["messages"]:
+        send_message(
+            message["message"],
+            message["role"],
+            save=False,
+        )
+
+
+st.title("DocumentGPT")
+
+st.markdown(
+    """
+Welcome!
+
+Use this chatbot to ask questions to an AI about your files!
+
+Upload your files on the sidebar.
+"""
+)
+
+with st.sidebar:
+    file = st.file_uploader(
+        "Upload a .txt .pdf or .docx file",
+        type=["pdf", "txt", "docx"],
+    )
+
+if file:
+    retriever = embed_file(file)
+    send_message("I'm ready! Ask away!", "ai", save=False)
+    paint_history()
+    message = st.chat_input("Ask anything about your file...")
+    if message:
+        send_message(message, "human")
+else:
+    st.session_state["messages"] = []
+
+```
+
+## 7.8 Chain (10:29)
+
+```py
+from langchain.prompts import ChatPromptTemplate
+from langchain.document_loaders import UnstructuredFileLoader
+from langchain.embeddings import CacheBackedEmbeddings, OpenAIEmbeddings
+from langchain.schema.runnable import RunnableLambda, RunnablePassthrough
+from langchain.storage import LocalFileStore
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.vectorstores.faiss import FAISS
+from langchain.chat_models import ChatOpenAI
+import streamlit as st
+
+import os
+
+llm = ChatOpenAI(
+    temperature=0.1,
+)
+
+
+st.set_page_config(
+    page_title="DocumentGPT",
+    page_icon="📃",
+)
+
+
+@st.cache_data(show_spinner="Embedding file...")
+def embed_file(file):
+    file_content = file.read()
+
+    # 파일을 저장할 경로를 생성합니다.
+    file_dir = "./.cache/files"
+    os.makedirs(file_dir, exist_ok=True)  # 디렉토리가 없으면 생성
+
+
+    file_path = f"./.cache/files/{file.name}"
+    with open(file_path, "wb") as f:
+        f.write(file_content)
+    cache_dir = LocalFileStore(f"./.cache/embeddings/{file.name}")
+    splitter = CharacterTextSplitter.from_tiktoken_encoder(
+        separator="\n",
+        chunk_size=600,
+        chunk_overlap=100,
+    )
+    loader = UnstructuredFileLoader(file_path)
+    docs = loader.load_and_split(text_splitter=splitter)
+    embeddings = OpenAIEmbeddings()
+    cached_embeddings = CacheBackedEmbeddings.from_bytes_store(embeddings, cache_dir)
+    vectorstore = FAISS.from_documents(docs, cached_embeddings)
+    retriever = vectorstore.as_retriever()
+    return retriever
+
+
+def send_message(message, role, save=True):
+    with st.chat_message(role):
+        st.markdown(message)
+    if save:
+        st.session_state["messages"].append({"message": message, "role": role})
+
+
+def paint_history():
+    for message in st.session_state["messages"]:
+        send_message(
+            message["message"],
+            message["role"],
+            save=False,
+        )
+
+def format_docs(docs):
+    return "\n\n".join(document.page_content for document in docs)
+
+prompt = ChatPromptTemplate.from_messages(
+    [
+        (
+            "system",
+            """
+            Answer the question using ONLY the following context. If you don't know the answer just say you don't know. DON'T make anything up.
+
+            Context: {context}
+            """,
+        ),
+        ("human", "{question}"),
+    ]
+)
+
+
+
+st.title("DocumentGPT")
+
+st.markdown(
+    """
+Welcome!
+
+Use this chatbot to ask questions to an AI about your files!
+
+Upload your files on the sidebar.
+"""
+)
+
+with st.sidebar:
+    file = st.file_uploader(
+        "Upload a .txt .pdf or .docx file",
+        type=["pdf", "txt", "docx"],
+    )
+
+if file:
+    retriever = embed_file(file)
+    send_message("I'm ready! Ask away!", "ai", save=False)
+    paint_history()
+    message = st.chat_input("Ask anything about your file...")
+    if message:
+        send_message(message, "human")
+        chain = (
+            {
+                "context" : retriever | RunnableLambda(format_docs),
+                "question" : RunnablePassthrough()
+            }
+            | prompt
+            | llm
+        )
+        response = chain.invoke(message)
+        send_message(response.content, "ai")
+else:
+    st.session_state["messages"] = []
+```
+
+## 7.9 Streaming (15:54)
+
+### [`BaseCallbackHandler`](https://api.python.langchain.com/en/latest/callbacks/langchain_core.callbacks.base.BaseCallbackHandler.html)
+
+- LangChain에서 콜백 메커니즘을 구현하기 위해 사용하는 기본 클래스
+- 이 클래스는 LLM(대형 언어 모델)과 같은 모듈에서 발생하는 다양한 이벤트를 처리할 수 있도록 콜백 메서드를 제공
+
+#### 목적
+
+1. **콜백 등록**: `BaseCallbackHandler`는 다양한 LLM 실행 중 발생하는 이벤트에 대해 콜백을 등록할 수 있게 해준다. 이를 통해 특정 작업이 실행될 때 사용자 정의 동작을 수행할 수 있다.
+2. **확장 가능성**: 기본 제공 메서드를 재정의하여 사용자가 필요한 대로 커스터마이즈할 수 있다. 예를 들어, LLM이 시작될 때, 새 토큰을 생성할 때, 종료될 때 등에 맞춰 특정 행동을 수행할 수 있다.
+
+```py
+from langchain.callbacks.base import BaseCallbackHandler
+
+class ChatCallbackHandler(BaseCallbackHandler):
+    message = ""
+
+    def on_llm_start(self, *args, **kwargs):
+        self.message_box = st.empty()
+
+    def on_llm_end(self, *args, **kwargs):
+        save_message(self.message, "ai")
+
+    def on_llm_new_token(self, token, *args, **kwargs):
+        self.message += token
+        self.message_box.markdown(self.message)
+
+
+llm = ChatOpenAI(
+    temperature=0.1,
+    streaming=True,
+    callbacks=[
+        ChatCallbackHandler(),
+    ],
+)
+
+```
+
+위 코드에서 `ChatCallbackHandler`는 `BaseCallbackHandler`를 상속받아:
+
+- **on_llm_start**: LLM이 시작될 때 빈 메시지 박스를 생성
+- **on_llm_new_token**: 새로운 토큰이 생성될 때마다 메시지에 추가하고, 이를 실시간으로 사용자에게 보여준다.
+- **on_llm_end**: LLM 실행이 끝났을 때 최종 메시지를 저장
+
+### `*args`와 `**kwargs`
+
+1. **`*args`**:
+
+   - 여러 개의 **위치 인자**를 하나의 **튜플**로 전달. 즉, 함수에 인자를 순서대로 전달해야 한다.
+   - 위치 인자는 인자의 순서에 따라 함수 내부에서 다루기 때문에 **순서가 중요**하다.
+   - 예: `on_llm_start(arg1, arg2, ...)`처럼 여러 값을 순서대로 전달할 수 있다.
+
+2. **`**kwargs`\*\*:
+   - 여러 개의 **키워드 인자**를 딕셔너리로 전달. 각 인자는 이름을 기준으로 전달되기 때문에 **순서에 상관없다**.
+   - 키워드 인자는 `key=value` 형식으로 전달되며, 순서와 상관없이 함수 내부에서 처리된다.
+   - 예: `on_llm_start(param1=value1, param2=value2, ...)`처럼 각 인자를 이름과 함께 전달한다.
+
+따라서 `*args`는 전달 순서가 중요하지만, `**kwargs`는 이름을 기준으로 하기 때문에 순서가 중요하지 않는다.
+또한, `*args`와 `**kwargs`를 함꼐 사용할 때는 위치 인자인 `*args`는 반드시 앞에 오고, 키워드 인자인 `**kwargs`는 뒤에 와야 한다.
+
+#### AI의 응답을 한 글자 또는 한 단어씩 실시간으로 보여주기
+
+```py
+llm = ChatOpenAI(
+    temperature=0.1,
+    streaming=True,
+    callbacks=[
+        ChatCallbackHandler(),
+    ],
+)
+```
+
+- `streaming=True`는 AI 모델이 응답을 한 번에 모두 반환하는 대신, 토큰 단위로 응답을 스트리밍 형태로 전송하게 하는 설정
+
+```py
+def on_llm_new_token(self, token, *args, **kwargs):
+    self.message += token
+    self.message_box.markdown(self.message)
+
+```
+
+- `streaming=True` 옵션과 함께 콜백 핸들러의 `on_llm_new_token` 메서드를 사용하면, AI 모델이 토큰을 생성할 때마다 실시간으로 한 글자 또는 한 단어씩 출력할 수 있다.
+- AI 모델이 새로운 토큰(문자 또는 단어)을 생성할 때마다 호출되며, 각 토큰을 하나씩 `self.message`에 추가한다.
+- 그리고 `self.message_box.markdown(self.message)`를 통해 화면에 실시간으로 업데이트된 텍스트를 보여준다.
+
+## 7.10 Recap (10:42)
+
+```py
+from langchain.prompts import ChatPromptTemplate
+from langchain.document_loaders import UnstructuredFileLoader
+from langchain.embeddings import CacheBackedEmbeddings, OpenAIEmbeddings
+from langchain.schema.runnable import RunnableLambda, RunnablePassthrough
+from langchain.storage import LocalFileStore
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.vectorstores.faiss import FAISS
+from langchain.chat_models import ChatOpenAI
+from langchain.callbacks.base import BaseCallbackHandler
+import streamlit as st
+
+# Streamlit 앱 설정 (페이지 제목, 아이콘 설정)
+st.set_page_config(
+    page_title="DocumentGPT",
+    page_icon="📃",
+)
+
+# Callback handler 클래스 정의: AI 응답이 실시간으로 표시되도록 핸들링
+class ChatCallbackHandler(BaseCallbackHandler):
+    message = ""  # 메시지 초기화
+
+    def on_llm_start(self, *args, **kwargs):
+        # 새로운 메시지 박스를 생성하여 비워둠
+        self.message_box = st.empty()
+
+    def on_llm_end(self, *args, **kwargs):
+        # AI 응답 완료 시 메시지를 저장
+        save_message(self.message, "ai")
+
+    def on_llm_new_token(self, token, *args, **kwargs):
+        # 새로운 토큰이 생성될 때마다 메시지에 추가하고 화면에 표시
+        self.message += token
+        self.message_box.markdown(self.message)
+
+# OpenAI의 LLM(언어 모델) 생성, 스트리밍 기능과 핸들러 등록
+llm = ChatOpenAI(
+    temperature=0.1,
+    streaming=True,  # 실시간 스트리밍 응답
+    callbacks=[
+        ChatCallbackHandler(),  # 위에서 정의한 핸들러
+    ],
+)
+
+# 파일을 임베딩하고 벡터화하는 함수
+@st.cache_data(show_spinner="Embedding file...")
+def embed_file(file):
+    file_content = file.read()  # 파일 내용을 읽음
+    file_path = f"./.cache/files/{file.name}"  # 파일 경로 설정
+    with open(file_path, "wb") as f:
+        f.write(file_content)  # 파일을 지정된 경로에 저장
+
+    # 캐시 디렉토리 설정
+    cache_dir = LocalFileStore(f"./.cache/embeddings/{file.name}")
+
+    # 텍스트 분할 설정 (텍스트를 작은 청크로 나눔)
+    splitter = CharacterTextSplitter.from_tiktoken_encoder(
+        separator="\n",
+        chunk_size=600,
+        chunk_overlap=100,
+    )
+
+    # 파일을 로드하고 분할
+    loader = UnstructuredFileLoader(file_path)
+    docs = loader.load_and_split(text_splitter=splitter)
+
+    # 임베딩 및 캐시 설정
+    embeddings = OpenAIEmbeddings()
+    cached_embeddings = CacheBackedEmbeddings.from_bytes_store(embeddings, cache_dir)
+
+    # 벡터 저장소 생성 (검색 가능하도록)
+    vectorstore = FAISS.from_documents(docs, cached_embeddings)
+
+    # 검색기 생성 및 반환
+    retriever = vectorstore.as_retriever()
+    return retriever
+
+# 채팅 메시지 저장 함수
+def save_message(message, role):
+    st.session_state["messages"].append({"message": message, "role": role})
+
+# 채팅 메시지를 UI에 표시하는 함수
+def send_message(message, role, save=True):
+    with st.chat_message(role):  # Streamlit에서 채팅 메시지 박스를 생성
+        st.markdown(message)  # 메시지 내용을 마크다운 형식으로 표시
+    if save:
+        save_message(message, role)  # 세션 상태에 메시지 저장
+
+# 이전 메시지 이력을 UI에 다시 그리는 함수
+def paint_history():
+    for message in st.session_state["messages"]:
+        send_message(
+            message["message"],
+            message["role"],
+            save=False,  # 이미 저장된 메시지는 다시 저장하지 않음
+        )
+
+# 문서 내용을 포맷하는 함수 (텍스트로 변환)
+def format_docs(docs):
+    return "\n\n".join(document.page_content for document in docs)
+
+# 대화용 프롬프트 템플릿 설정
+prompt = ChatPromptTemplate.from_messages(
+    [
+        (
+            "system",
+            """
+            Answer the question using ONLY the following context. If you don't know the answer just say you don't know. DON'T make anything up.
+
+            Context: {context}
+            """,
+        ),
+        ("human", "{question}"),
+    ]
+)
+
+# Streamlit 앱의 UI 설정
+st.title("DocumentGPT")
+
+st.markdown(
+    """
+Welcome!
+
+Use this chatbot to ask questions to an AI about your files!
+
+Upload your files on the sidebar.
+"""
+)
+
+# 사이드바에서 파일 업로드 UI
+with st.sidebar:
+    file = st.file_uploader(
+        "Upload a .txt .pdf or .docx file",
+        type=["pdf", "txt", "docx"],
+    )
+
+# 파일이 업로드된 경우
+if file:
+    retriever = embed_file(file)  # 파일 임베딩 후 검색기 생성
+    send_message("I'm ready! Ask away!", "ai", save=False)  # 준비 완료 메시지 표시
+    paint_history()  # 기존 메시지 이력 표시
+
+    message = st.chat_input("Ask anything about your file...")  # 사용자 입력 받음
+    if message:
+        send_message(message, "human")  # 사용자가 입력한 메시지 표시
+        chain = (
+            {
+                "context": retriever | RunnableLambda(format_docs),  # 검색 결과 포맷팅
+                "question": RunnablePassthrough(),  # 사용자 질문 그대로 전달
+            }
+            | prompt  # 질문에 맞는 프롬프트 생성
+            | llm  # 언어 모델을 사용해 응답 생성
+        )
+        with st.chat_message("ai"):  # AI 응답 박스 생성
+            chain.invoke(message)  # 언어 모델 실행 및 응답 표시
+
+# 파일이 없을 경우 메시지 초기화
+else:
+    st.session_state["messages"] = []
+
+
+```
