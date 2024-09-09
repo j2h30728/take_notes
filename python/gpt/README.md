@@ -2,17 +2,17 @@
 
 ## 2 INTRODUCE
 
-### 2.0 Welcome (02:06)
+### 2.0 Welcome
 
-### 2.1 Requirements (02:47)
+### 2.1 Requirements
 
-### 2.2 What Are We Using (04:55)
+### 2.2 What Are We Using
 
-### 2.3 OpenAI Requirements (03:18)
+### 2.3 OpenAI Requirements
 
-### 2.4 Disclaimer (02:33)
+### 2.4 Disclaimer
 
-### 2.5 [Virtual Environment](https://docs.python.org/ko/3/library/venv.html) (11:03)
+### 2.5 [Virtual Environment](https://docs.python.org/ko/3/library/venv.html)
 
 #### [가상환경 만들기](https://docs.python.org/ko/3/library/venv.html#how-venvs-work)
 
@@ -67,13 +67,13 @@ which python
    - 표시되는 목록 하단에 "Enter interpreter path..."를 선택합니다.
    - 가상환경의 Python 경로를 입력합니다.
 
-### 2.6 Jupyter Notebooks (05:26)
+### 2.6 Jupyter Notebooks
 
 1. `.ipynb` 확장자 파일
 
 # 3 Welcome To Langchain
 
-## 3.0 LLMs and Chat Models (08:07)
+## 3.0 LLMs and Chat Models
 
 - 환경변수를 읽지 못해서 직접 dotenv와 os를 불러서 진행한다.
 
@@ -96,9 +96,9 @@ b
 
 - '2021년 현재 전 세계에는 195개의 나라가 있습니다. 이 숫자는 유엔에 회원국으로 등록된 나라들을 기준으로 한 것이며, 이외에도 일부 비인정국가나 지역이 존재합니다.'
 
-## 3.1 Predict Messages (05:04)
+## 3.1 Predict Messages
 
-## 3.2 Prompt Templates (07:59)
+## 3.2 Prompt Templates
 
 ### 프롬프트 문장
 
@@ -160,7 +160,7 @@ prompt = template.format_messages(
 chat.predict_messages(prompt)
 ```
 
-## 3.3 OutputParser and [LCEL](https://python.langchain.com/v0.1/docs/expression_language/) (11:51)
+## 3.3 OutputParser and [LCEL](https://python.langchain.com/v0.1/docs/expression_language/)
 
 - `chain = template | chat | CommaOutputParser()`
   - template 실행 => cath 실행 => CommaOutputParser() 실행한 값을 반환
@@ -173,7 +173,7 @@ chat.predict_messages(prompt)
 
 <img width='500' src='./docs/lcel.png' alt='Runnable interface'/>
 
-## 3.4 [Chaining Chains](https://python.langchain.com/v0.1/docs/expression_language/why/#invoke) (14:11)
+## 3.4 [Chaining Chains](https://python.langchain.com/v0.1/docs/expression_language/why/#invoke)
 
 1. `chef_prompt | chat`: `chef_prompt`를 사용하여 프롬프트를 생성하고, 이를 `chat`으로 전달하여 AI로부터 메시지를 받습니다. 이 결과가 `chef_chain`입니다.
 
@@ -216,11 +216,11 @@ chat = ChatOpenAI(openai_api_key=api_key,temperature=0.1,
                       ],)
 ```
 
-## 3.5 Recap (05:21)
+## 3.5 Recap
 
 # 4 Model IO
 
-## 4.0 Introduction (03:02)
+## 4.0 Introduction
 
 LangChain은 다양한 주요 모듈을 위한 확장 가능한 표준 인터페이스와 외부 통합 기능을 제공한다
 
@@ -236,7 +236,7 @@ LangChain은 다양한 주요 모듈을 위한 확장 가능한 표준 인터페
 
 - **Callbacks**: 체인의 중간 단계에서 발생하는 모든 이벤트를 기록하거나 스트리밍하는 기능을 제공
 
-## 4.1 [FewShotPromptTemplate](https://python.langchain.com/v0.1/docs/modules/model_io/prompts/few_shot_examples/) (13:52)
+## 4.1 [FewShotPromptTemplate](https://python.langchain.com/v0.1/docs/modules/model_io/prompts/few_shot_examples/)
 
 ### 1. 예제 목록 생성 : (키 : input variables, 값 :해당 입력 변수의 값)
 
@@ -314,7 +314,7 @@ prompt = FewShotPromptTemplate(
 
 ```
 
-## 4.2 [FewShotChatMessagePromptTemplate](https://api.python.langchain.com/en/latest/prompts/langchain_core.prompts.few_shot.FewShotChatMessagePromptTemplate.html) (07:24)
+## 4.2 [FewShotChatMessagePromptTemplate](https://api.python.langchain.com/en/latest/prompts/langchain_core.prompts.few_shot.FewShotChatMessagePromptTemplate.html)
 
 #### - **몇 개의 짧은 예시를 지원하는 채팅 프롬프트 템플릿**
 
@@ -419,9 +419,9 @@ final_prompt = ChatPromptTemplate.from_messages([
 
 ```
 
-## 4.3 [LengthBasedExampleSelector](https://python.langchain.com/v0.1/docs/modules/model_io/prompts/example_selectors/#custom-example-selector) (07:55)
+## 4.3 [LengthBasedExampleSelector](https://python.langchain.com/v0.1/docs/modules/model_io/prompts/example_selectors/#custom-example-selector)
 
-## 4.4 Serialization and Composition (08:12)
+## 4.4 Serialization and Composition
 
 ### [Using PipelinePrompt](https://python.langchain.com/v0.1/docs/modules/model_io/prompts/composition/#using-pipelineprompt)
 
@@ -513,7 +513,7 @@ chain.invoke(
 )
 ```
 
-## 4.5 [Caching](https://python.langchain.com/v0.1/docs/modules/model_io/llms/llm_caching/) (05:54)
+## 4.5 [Caching](https://python.langchain.com/v0.1/docs/modules/model_io/llms/llm_caching/)
 
 - LangChain이 LLM을 위한 캐싱 레이어를 옵션으로 제공한다.
 - 동일한 완료를 여러 번 요청하는 경우 LLM 공급자에 대한 API 호출 횟수를 줄여 비용을 절감할 수 있다.
@@ -607,7 +607,7 @@ conversation = ConversationChain(
 )
 ```
 
-## 5.1 [ConversationBufferWindowMemory](https://python.langchain.com/docs/modules/memory/types/buffer_window) (03:14)
+## 5.1 [ConversationBufferWindowMemory](https://python.langchain.com/docs/modules/memory/types/buffer_window)
 
 - 시간에 따른 대화의 상호 작용 목록을 유지합니다. 마지막 K개의 상호 작용만 사용
 - 이는 버퍼가 너무 커지지 않도록 가장 최근 상호 작용의 슬라이딩 윈도우를 유지합니다.
@@ -677,7 +677,7 @@ memory = ConversationSummaryBufferMemory(
     )
 ```
 
-## 5.4 [ConversationKGMemory](https://python.langchain.com/docs/modules/memory/types/summary_buffer) (03:52) [실습코드](./notes/5.4.ipynb)
+## 5.4 [ConversationKGMemory](https://python.langchain.com/docs/modules/memory/types/summary_buffer) [실습코드](./notes/5.4.ipynb)
 
 - 대화 내용 엔티티의 KG(knowledge graph) 를 만들어 중요한 요약본을 생성하여 메모리에 저장하는 방식
 
@@ -700,7 +700,7 @@ memory.load_memory_variables({"inputs": "담은 뭐를 좋아해?"})
 # >> {'history': [SystemMessage(content='On 담: 담 좋아해 김치.')]}
 ```
 
-## 5.5 [Memory on LLMChain](https://python.langchain.com/v0.1/docs/modules/memory/types/summary_buffer/#using-in-a-chain) (08:47)
+## 5.5 [Memory on LLMChain](https://python.langchain.com/v0.1/docs/modules/memory/types/summary_buffer/#using-in-a-chain)
 
 - [Initiate the LLMChain](https://python.langchain.com/v0.1/docs/integrations/llms/deepinfra/#initiate-the-llmchain)
 
@@ -759,7 +759,7 @@ chain.predict(question="제 이름은 담입니다.")
   - 이 키는 프롬프트 템플릿과 연동되어 작동
   - 예를 들어, 프롬프트 템플릿에서 {chat_history}라는 변수로 대화 기록을 불러오도록 지정했다면, memory_key는 "chat_history"로 설정되어야 한다. 이 키를 다른 이름으로 변경하면, 프롬프트 템플릿에서도 해당 이름으로 맞춰야 한다.
 
-## 5.6 Chat Based Memory (04:03)
+## 5.6 Chat Based Memory
 
 ### [MessagesPlaceholder](https://python.langchain.com/v0.1/docs/modules/model_io/prompts/quick_start/#messagesplaceholder)
 
@@ -820,7 +820,7 @@ chain.predict(question="제 이름은 담입니다.")
 
 ```
 
-## 5.7 LCEL Based Memory (07:38)
+## 5.7 LCEL Based Memory
 
 ```py
 llm = ChatOpenAI(openai_api_key=api_key,temperature=0.1)
@@ -861,7 +861,7 @@ def invoke_chain(question):
 invoke_chain("제 이름은 담입니다.")
 ```
 
-## 5.8 Recap (04:57)
+## 5.8 Recap
 
 ### LCEL (LangChain Execution Language)
 
@@ -899,7 +899,7 @@ invoke_chain("제 이름은 담입니다.")
 
 # 6 [RAG](https://python.langchain.com/v0.2/docs/tutorials/rag/)
 
-## 6.0 Introduction (04:20)
+## 6.0 Introduction
 
 ### GPT Response
 
@@ -925,7 +925,7 @@ invoke_chain("제 이름은 담입니다.")
   - AI 및 기계 학습 커뮤니티에서 RAG는 다양한 연구 논문과 구현이 개발되고 있으며 주요 초점 중 하나입니다.
   - 이는 학습된 정보뿐만 아니라 외부 소스에서 새롭고 관련된 정보를 통합하여 응답의 질과 관련성을 향상시키는 더 정교한 AI 시스템으로 나아가는 단계를 나타냅니다
 
-## 6.1 Data Loaders and Splitters (14:35)
+## 6.1 Data Loaders and Splitters
 
 ```py
 from langchain.chat_models import ChatOpenAI
@@ -940,15 +940,15 @@ loader.load_and_split(text_splitter=splitter)
 
 ```
 
-## 6.2 Tiktoken (04:19)
+## 6.2 Tiktoken
 
-## 6.3 Vectors (11:56)
+## 6.3 Vectors
 
-## 6.4 Vector Store (12:15)
+## 6.4 Vector Store
 
-## 6.5 Langsmith (01:48)
+## 6.5 Langsmith
 
-## 6.6 RetrievalQA (18:22)
+## 6.6 RetrievalQA
 
 ### Chain Type
 
@@ -982,7 +982,7 @@ loader.load_and_split(text_splitter=splitter)
    - **장점**: 각 문서에 대해 생성된 답변 중 가장 관련성이 높은 것을 선택할 수 있어, 정확성이 높아진다.
    - **단점**: `map_reduce`에 비해 비슷한 복잡성을 가지지만, 순위 매기는 과정에서 시간이 추가로 소요될 수 있다.
 
-## 6.7 Recap (05:17)
+## 6.7 Recap
 
 ```py
 # 필요한 라이브러리와 모듈 가져오기
@@ -1121,15 +1121,15 @@ RAG의 주요 단계는 다음과 같습니다:
 
 ---
 
-## 6.8 Stuff LCEL Chain (10:13)
+## 6.8 Stuff LCEL Chain
 
-## 6.9 Map Reduce LCEL Chain (19:48)
+## 6.9 Map Reduce LCEL Chain
 
-## 6.10 Recap (07:26)
+## 6.10 Recap
 
 # 7 DocumentGPT
 
-## 7.0 Introduction (05:01)
+## 7.0 Introduction
 
 ### [**Streamlit이란?**](https://docs.streamlit.io/)
 
@@ -1220,7 +1220,7 @@ else:
 - Format using strftime().
 - Example: "%d/%m/%Y, %H:%M:%S"
 
-## 7.3 [Multi Page](https://docs.streamlit.io/library/get-started/multipage-apps) (07:08)
+## 7.3 [Multi Page](https://docs.streamlit.io/library/get-started/multipage-apps)
 
 ### Page
 
@@ -1256,7 +1256,7 @@ Here are the apps I made:
 
 ```
 
-## 7.4 Chat Messages (14:10)
+## 7.4 Chat Messages
 
 ### [Session State](https://docs.streamlit.io/library/api-reference/session-state)
 
@@ -1307,11 +1307,11 @@ if message:
 
 ```
 
-## 7.5 Recap (04:39)
+## 7.5 Recap
 
-## 7.6 Uploading Documents (13:23)
+## 7.6 Uploading Documents
 
-## 7.7 Chat History (11:17)
+## 7.7 Chat History
 
 ### `@st.cache_data(show_spinner="Embedding file...")`
 
@@ -1434,7 +1434,7 @@ else:
 
 ```
 
-## 7.8 Chain (10:29)
+## 7.8 Chain
 
 ```py
 from langchain.prompts import ChatPromptTemplate
@@ -1560,7 +1560,7 @@ else:
     st.session_state["messages"] = []
 ```
 
-## 7.9 Streaming (15:54)
+## 7.9 Streaming
 
 ### [`BaseCallbackHandler`](https://api.python.langchain.com/en/latest/callbacks/langchain_core.callbacks.base.BaseCallbackHandler.html)
 
@@ -1646,7 +1646,7 @@ def on_llm_new_token(self, token, *args, **kwargs):
 - AI 모델이 새로운 토큰(문자 또는 단어)을 생성할 때마다 호출되며, 각 토큰을 하나씩 `self.message`에 추가한다.
 - 그리고 `self.message_box.markdown(self.message)`를 통해 화면에 실시간으로 업데이트된 텍스트를 보여준다.
 
-## 7.10 Recap (10:42)
+## 7.10 Recap
 
 ```py
 from langchain.prompts import ChatPromptTemplate
@@ -1810,3 +1810,620 @@ else:
 
 
 ```
+
+# 9 QuizGPT
+
+## 9.0 Introduction
+
+## 9.1 [WikipediaRetriever]
+
+> - Wikipedia는 위키피디언으로 알려진 자원봉사자 커뮤니티가 개방형 공동 작업과 미디어위키라는 위키 기반 편집 시스템을 사용하여 작성하고 관리하는 다국어 무료 온라인 백과사전
+> - Wikipedia는 역사상 가장 규모가 크고 가장 많이 읽힌 참고 자료
+
+- wikipedia.org에서 위키 페이지를 다운스트림에서 사용되는 문서 형식으로 검색
+
+```py
+from langchain.document_loaders import UnstructuredFileLoader
+from langchain.text_splitter import CharacterTextSplitter
+import streamlit as st
+from langchain.retrievers import WikipediaRetriever
+
+import os
+
+st.set_page_config(
+    page_title="QuizGPT",
+    page_icon="❓",
+)
+
+st.title("QuizGPT")
+
+
+@st.cache_data(show_spinner="Loading file...")
+def split_file(file):
+    file_content = file.read()
+
+    file_dir = "./.cache/quiz_files"
+    os.makedirs(file_dir, exist_ok=True)
+
+    file_path = f"./.cache/quiz_files/{file.name}"
+    with open(file_path, "wb") as f:
+        f.write(file_content)
+    splitter = CharacterTextSplitter.from_tiktoken_encoder(
+        separator="\n",
+        chunk_size=600,
+        chunk_overlap=100,
+    )
+    loader = UnstructuredFileLoader(file_path)
+    docs = loader.load_and_split(text_splitter=splitter)
+    return docs
+
+
+with st.sidebar:
+    choice = st.selectbox(
+        "Choose what you want to use.",
+        (
+            "File",
+            "Wikipedia Article",
+        ),
+    )
+    if choice == "File":
+        file = st.file_uploader(
+            "Upload a .docx , .txt or .pdf file",
+            type=["pdf", "txt", "docx"],
+        )
+        if file:
+            docs = split_file(file)
+            st.write(docs)
+    else:
+        topic = st.text_input("Search Wikipedia...")
+        if topic:
+            retriever = WikipediaRetriever(top_k_results=5)
+            with st.status("Searching Wikipedia..."):
+                docs = retriever.get_relevant_documents(topic)
+                st.write(docs)
+
+```
+
+## 9.2 [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4)
+
+## 9.3 Questions Prompt
+
+### 전체 코드
+
+```py
+from langchain.document_loaders import UnstructuredFileLoader
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.chat_models import ChatOpenAI
+from langchain.retrievers import WikipediaRetriever
+from langchain.prompts import ChatPromptTemplate
+from langchain.callbacks import StreamingStdOutCallbackHandler
+import streamlit as st
+
+import os
+
+st.set_page_config(
+    page_title="QuizGPT",
+    page_icon="❓",
+)
+
+st.title("QuizGPT")
+
+llm = ChatOpenAI(
+    temperature=0.1,
+    model="gpt-4-turbo",
+    streaming=True,
+    callbacks=[StreamingStdOutCallbackHandler()],
+)
+
+@st.cache_data(show_spinner="Loading file...")
+def split_file(file):
+    file_content = file.read()
+
+    file_dir = "./.cache/quiz_files"
+    os.makedirs(file_dir, exist_ok=True)
+
+    file_path = f"./.cache/quiz_files/{file.name}"
+    with open(file_path, "wb") as f:
+        f.write(file_content)
+    splitter = CharacterTextSplitter.from_tiktoken_encoder(
+        separator="\n",
+        chunk_size=600,
+        chunk_overlap=100,
+    )
+    loader = UnstructuredFileLoader(file_path)
+    docs = loader.load_and_split(text_splitter=splitter)
+    return docs
+
+# split 된 문서 배열을 다시 이어주는 역할
+def format_docs(docs):
+    return "\n\n".join(document.page_content for document in docs)
+
+
+with st.sidebar:
+    docs = None
+    choice = st.selectbox(
+        "Choose what you want to use.",
+        (
+            "File",
+            "Wikipedia Article",
+        ),
+    )
+    if choice == "File":
+        file = st.file_uploader(
+            "Upload a .docx , .txt or .pdf file",
+            type=["pdf", "txt", "docx"],
+        )
+        if file:
+            docs = split_file(file)
+    else:
+        topic = st.text_input("Search Wikipedia...")
+        if topic:
+            retriever = WikipediaRetriever(top_k_results=5,lang="ko")
+            with st.status("Searching Wikipedia..."):
+                docs = retriever.get_relevant_documents(topic)
+
+if not docs:
+    st.markdown(
+        """
+    QuizGPT에 어서 오세요.
+
+    저는 여러분의 지식을 테스트하고 공부하는 데 도움이 되도록 여러분이 업로드한 파일이나 위키피디아 아티클을 바탕으로 퀴즈를 만들 것입니다.
+
+    파일을 업로드 하거나 사이드바에서 위키피디아에 검색하여 시작해주세요.
+
+    """
+    )
+else:
+    prompt = ChatPromptTemplate.from_messages( # 질문에 대한 예시 프롬프트
+    [
+        (
+            "system",
+            """
+    당신은 프론트엔드 개발을 가르치는 선생님 역할을 맡고 있습니다.
+
+    주어진 context를 바탕으로 사용자의 지식을 테스트할 수 있는 10개의 질문을 만들어주세요.
+
+    각 질문에는 4개의 답변이 있어야 하며, 그 중 하나만 정답이고 나머지는 오답이어야 합니다.
+    질문에 대한 답변인 이유에 대해서도 함께 설명해주어야합니다.
+
+    (정답)을 표시하려면 (o)를 사용하세요.
+
+    질문 예시:
+
+    질문: HTML의 주 목적은 무엇인가요?
+    답변: 웹페이지 스타일 적용|웹페이지 구조 정의(o)|데이터베이스 관리|사용자 인터랙션 처리
+    설명: HTML은 웹페이지의 구조를 정의하는 언어입니다. CSS는 스타일을 적용하고, 자바스크립트는 상호작용을 처리하는 역할을 합니다.
+
+    질문: CSS는 무엇의 약자인가요?
+    답변: 캐스캐이딩 스타일 시트(o)|컬러 스타일 시스템|코드 스타일 문법|중앙 스타일 시트
+    설명: CSS는 'Cascading Style Sheets'의 약자로, 웹 페이지의 디자인과 레이아웃을 제어하는 데 사용됩니다.
+
+    질문: 자바스크립트는 웹 개발에서 어떤 역할을 하나요?
+    답변: 정적 웹페이지 생성|웹페이지에 상호작용 추가(o)|웹페이지 스타일 적용|서버 요청 관리
+    설명: 자바스크립트는 웹페이지에 동적인 기능을 추가하여 사용자와의 상호작용을 가능하게 합니다. 정적 웹페이지는 HTML과 CSS로만 구현됩니다.
+
+    질문: 웹 개발에서 DOM이란 무엇인가요?
+    답변: 문서 객체 모델(o)|데이터 객체 관리|동적 객체 모델|문서 방향 모델
+    설명: DOM은 'Document Object Model'의 약자로, 웹페이지의 구조화된 표현을 의미하며, 자바스크립트가 이를 이용해 동적으로 웹 페이지를 조작할 수 있습니다.
+
+    질문: 다음 중 자바스크립트 프레임워크는 무엇인가요?
+    답변: 플라스크|리액트(o)|장고|라라벨
+    설명: 리액트(React)는 자바스크립트 기반의 프론트엔드 라이브러리로, 사용자 인터페이스를 효율적으로 구축하기 위해 사용됩니다. 플라스크와 장고는 파이썬 기반의 백엔드 프레임워크입니다.
+
+    이제 당신의 차례입니다! context를 기반으로 질문을 만들어주세요.
+
+    context: {context}
+""",
+        )
+    ]
+)
+
+    chain = {"context" : format_docs} | prompt | llm
+
+    start = st.button('퀴즈 만들기')
+
+    if start:
+        response = chain.invoke(docs)
+        st.write(response)
+
+```
+
+## 9.4 Formatter Prompt
+
+### 로직 설명
+
+```py
+questions_chain = {"context" : format_docs} | questions_prompt | llm
+formatting_chain = formatting_prompt | llm
+
+
+    start = st.button('퀴즈 만들기')
+
+    if start:
+        questions_response = questions_chain.invoke(docs)
+        st.write(questions_response.content)
+        formatting_response = formatting_chain.invoke(
+            {"context" : questions_response.content}
+        )
+        st.write(formatting_response.content)
+
+```
+
+1. 위키피디아 또는 파일로 추출한 문서를 split 처리한 것을 다시 이어 docs로 생성
+2. questions_chain으로 docs기반으로 퀴즈를 생성
+3. 퀴즈를 다시 formatting_chain을 통해서 원하는 형식(json)으로 변환
+
+### 전체 코드
+
+````py
+from langchain.document_loaders import UnstructuredFileLoader
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.chat_models import ChatOpenAI
+from langchain.retrievers import WikipediaRetriever
+from langchain.prompts import ChatPromptTemplate
+from langchain.callbacks import StreamingStdOutCallbackHandler
+import streamlit as st
+
+import os
+
+st.set_page_config(
+    page_title="QuizGPT",
+    page_icon="❓",
+)
+
+st.title("QuizGPT")
+
+llm = ChatOpenAI(
+    temperature=0.1,
+    model="gpt-4-turbo",
+    # streaming=True,
+    # callbacks=[StreamingStdOutCallbackHandler()],
+)
+
+@st.cache_data(show_spinner="Loading file...")
+def split_file(file):
+    file_content = file.read()
+
+    file_dir = "./.cache/quiz_files"
+    os.makedirs(file_dir, exist_ok=True)
+
+    file_path = f"./.cache/quiz_files/{file.name}"
+    with open(file_path, "wb") as f:
+        f.write(file_content)
+    splitter = CharacterTextSplitter.from_tiktoken_encoder(
+        separator="\n",
+        chunk_size=600,
+        chunk_overlap=100,
+    )
+    loader = UnstructuredFileLoader(file_path)
+    docs = loader.load_and_split(text_splitter=splitter)
+    return docs
+
+def format_docs(docs):
+    return "\n\n".join(document.page_content for document in docs)
+
+# 질문 프롬프트
+questions_prompt = ChatPromptTemplate.from_messages(
+    [
+        (
+            "system",
+            """
+    당신은 프론트엔드 개발을 가르치는 선생님 역할을 맡고 있습니다.
+
+    주어진 context를 바탕으로 사용자의 지식을 테스트할 수 있는 10개의 질문을 만들어주세요.
+
+    각 질문에는 4개의 답변이 있어야 하며, 그 중 하나만 정답이고 나머지는 오답이어야 합니다.
+    질문에 대한 답변인 이유에 대해서도 함께 설명해주어야합니다.
+
+    (정답)을 표시하려면 (o)를 사용하세요.
+
+    질문 예시:
+
+    질문: HTML의 주 목적은 무엇인가요?
+    답변: 웹페이지 스타일 적용|웹페이지 구조 정의(o)|데이터베이스 관리|사용자 인터랙션 처리
+    설명: HTML은 웹페이지의 구조를 정의하는 언어입니다. CSS는 스타일을 적용하고, 자바스크립트는 상호작용을 처리하는 역할을 합니다.
+
+    질문: CSS는 무엇의 약자인가요?
+    답변: 캐스캐이딩 스타일 시트(o)|컬러 스타일 시스템|코드 스타일 문법|중앙 스타일 시트
+    설명: CSS는 'Cascading Style Sheets'의 약자로, 웹 페이지의 디자인과 레이아웃을 제어하는 데 사용됩니다.
+
+    질문: 자바스크립트는 웹 개발에서 어떤 역할을 하나요?
+    답변: 정적 웹페이지 생성|웹페이지에 상호작용 추가(o)|웹페이지 스타일 적용|서버 요청 관리
+    설명: 자바스크립트는 웹페이지에 동적인 기능을 추가하여 사용자와의 상호작용을 가능하게 합니다. 정적 웹페이지는 HTML과 CSS로만 구현됩니다.
+
+    질문: 웹 개발에서 DOM이란 무엇인가요?
+    답변: 문서 객체 모델(o)|데이터 객체 관리|동적 객체 모델|문서 방향 모델
+    설명: DOM은 'Document Object Model'의 약자로, 웹페이지의 구조화된 표현을 의미하며, 자바스크립트가 이를 이용해 동적으로 웹 페이지를 조작할 수 있습니다.
+
+    질문: 다음 중 자바스크립트 프레임워크는 무엇인가요?
+    답변: 플라스크|리액트(o)|장고|라라벨
+    설명: 리액트(React)는 자바스크립트 기반의 프론트엔드 라이브러리로, 사용자 인터페이스를 효율적으로 구축하기 위해 사용됩니다. 플라스크와 장고는 파이썬 기반의 백엔드 프레임워크입니다.
+
+    이제 당신의 차례입니다! context를 기반으로 질문을 만들어주세요.
+
+    context: {context}
+""",
+        )
+    ]
+)
+
+questions_chain = {"context" : format_docs} | questions_prompt | llm
+
+# 퀴즈를 만드는 프롬프트
+formatting_prompt = ChatPromptTemplate.from_messages(
+    [
+        (
+            "system",
+            """
+    당신은 강력한 포맷팅 알고리즘입니다.
+
+    당신은 시험 문제를 JSON 형식으로 포맷합니다.
+    (o)는 정답을 의미합니다.
+
+    입력 예시:
+
+    질문: HTML의 주 목적은 무엇인가요?
+    답변: 웹페이지 스타일 적용|웹페이지 구조 정의(o)|데이터베이스 관리|사용자 인터랙션 처리
+
+    질문: CSS는 무엇의 약자인가요?
+    답변: 캐스캐이딩 스타일 시트(o)|컬러 스타일 시스템|코드 스타일 문법|중앙 스타일 시트
+
+    질문: 자바스크립트는 웹 개발에서 어떤 역할을 하나요?
+    답변: 정적 웹페이지 생성|웹페이지에 상호작용 추가(o)|웹페이지 스타일 적용|서버 요청 관리
+
+    출력 예시:
+
+    ```json
+    {{
+        "questions": [
+            {{
+                "question": "HTML의 주 목적은 무엇인가요?",
+                "answers": [
+                    {{
+                        "answer": "웹페이지 스타일 적용",
+                        "correct": false
+                    }},
+                    {{
+                        "answer": "웹페이지 구조 정의",
+                        "correct": true
+                    }},
+                    {{
+                        "answer": "데이터베이스 관리",
+                        "correct": false
+                    }},
+                    {{
+                        "answer": "사용자 인터랙션 처리",
+                        "correct": false
+                    }}
+                ]
+            }},
+            {{
+                "question": "CSS는 무엇의 약자인가요?",
+                "answers": [
+                    {{
+                        "answer": "캐스캐이딩 스타일 시트",
+                        "correct": true
+                    }},
+                    {{
+                        "answer": "컬러 스타일 시스템",
+                        "correct": false
+                    }},
+                    {{
+                        "answer": "코드 스타일 문법",
+                        "correct": false
+                    }},
+                    {{
+                        "answer": "중앙 스타일 시트",
+                        "correct": false
+                    }}
+                ]
+            }},
+            {{
+                "question": "자바스크립트는 웹 개발에서 어떤 역할을 하나요?",
+                "answers": [
+                    {{
+                        "answer": "정적 웹페이지 생성",
+                        "correct": false
+                    }},
+                    {{
+                        "answer": "웹페이지에 상호작용 추가",
+                        "correct": true
+                    }},
+                    {{
+                        "answer": "웹페이지 스타일 적용",
+                        "correct": false
+                    }},
+                    {{
+                        "answer": "서버 요청 관리",
+                        "correct": false
+                    }}
+                ]
+            }}
+        ]
+    }}
+    ```
+
+    이제 당신의 차례입니다!
+
+    Questions: {context}
+""",
+        )
+    ]
+)
+
+formatting_chain = formatting_prompt | llm
+
+
+with st.sidebar:
+    docs = None
+    choice = st.selectbox(
+        "Choose what you want to use.",
+        (
+            "File",
+            "Wikipedia Article",
+        ),
+    )
+    if choice == "File":
+        file = st.file_uploader(
+            "Upload a .docx , .txt or .pdf file",
+            type=["pdf", "txt", "docx"],
+        )
+        if file:
+            docs = split_file(file)
+    else:
+        topic = st.text_input("Search Wikipedia...")
+        if topic:
+            retriever = WikipediaRetriever(top_k_results=5,lang="ko")
+            with st.status("Searching Wikipedia..."):
+                docs = retriever.get_relevant_documents(topic)
+
+if not docs:
+    st.markdown(
+        """
+    QuizGPT에 어서 오세요.
+
+    저는 여러분의 지식을 테스트하고 공부하는 데 도움이 되도록 여러분이 업로드한 파일이나 위키피디아 아티클을 바탕으로 퀴즈를 만들 것입니다.
+
+    파일을 업로드 하거나 사이드바에서 위키피디아에 검색하여 시작해주세요.
+
+    """
+    )
+else:
+    start = st.button('퀴즈 만들기')
+
+    if start:
+        questions_response = questions_chain.invoke(docs)
+        st.write(questions_response.content)
+        formatting_response = formatting_chain.invoke(
+            {"context" : questions_response.content}
+        )
+        st.write(formatting_response.content)
+
+````
+
+## 9.5 [Output Parser](https://python.langchain.com/docs/modules/model_io/output_parsers/)
+
+- Output Parser는 LLM의 출력을 가져와 더 적합한 형식으로 변환하는 역할을 담당
+- 이는 LLM을 사용하여 모든 형태의 구조화된 데이터를 생성할 때 매우 유용
+- 다양한 유형의 출력 파서 모음을 보유하고 있는 것 외에도, LangChain OutputParsers의 차별화된 장점 중 하나는 많은 파서가 스트리밍을 지원한다는 점
+
+- [BaseOutputParser](https://api.python.langchain.com/en/latest/output_parsers/langchain_core.output_parsers.base.BaseOutputParser.html)
+
+````py
+# json 표시를 제거하고 json 으로 파싱을 진행
+class JsonOutputParser(BaseOutputParser):
+    def parse(self, text):
+        text = text.replace("```", "").replace("json", "")
+        return json.loads(text)
+
+
+output_parser = JsonOutputParser()
+
+````
+
+```py
+# split => docs = > chain [question => formatting => parser] 진행
+chain = {"context": questions_chain} | formatting_chain | output_parser
+        response = chain.invoke(docs)
+        st.write(response)
+```
+
+## 9.6 [Caching](https://docs.streamlit.io/library/advanced-features/caching)
+
+### Streamlit의 실행 모델과 캐싱 문제
+
+- Streamlit은 코드가 변경되거나 사용자가 상호작용할 때마다 전체 스크립트를 처음부터 다시 실행합니다.
+- 이 실행 모델은 개발을 쉽게 해주지만, 두 가지 문제를 유발할 수 있습니다:
+
+1. **장시간 실행되는 함수**: 사용자가 상호작용할 때마다 함수가 다시 실행되어 앱 속도가 느려질 수 있습니다.
+2. **객체의 재생성**: 매 실행마다 객체가 다시 생성되므로, 세션 간에 데이터를 유지하기 어렵습니다.
+
+이를 해결하기 위해 Streamlit은 **내장된 캐싱 메커니즘**을 제공합니다. 캐싱은 한 번 실행된 함수의 결과를 저장하여, 같은 입력값이 들어오면 다시 계산하지 않고 저장된 결과를 반환함으로써 속도를 개선할 수 있습니다.
+
+### Streamlit의 캐싱 데코레이터
+
+Streamlit에서는 두 가지 캐싱 데코레이터가 제공됩니다:
+
+![streamlit cache](./docs/streamlit_cache.png)
+
+1. **`@st.cache_data`**:
+   - 주로 **데이터를 반환하는 계산**을 캐싱하는 데 사용됩니다. 예를 들어, CSV 파일을 DataFrame으로 로드하거나 API에서 데이터를 가져올 때 유용합니다.
+   - 데이터의 새 복사본을 생성하여 사용하므로, 변형 및 경쟁 조건에 대비할 수 있습니다. 따라서 데이터 캐싱이 필요한 대부분의 경우에 적합합니다.
+2. **`@st.cache_resource`**:
+   - 머신러닝 모델이나 데이터베이스 연결과 같은 **전역 리소스**를 캐싱하는 데 사용됩니다.
+   - 리소스는 앱의 모든 실행 및 세션에서 재사용되며, 직렬화되지 않은 객체들을 다룰 때 유용합니다. 한 번만 로드되고 이후로는 동일한 리소스가 여러 세션에 걸쳐 재사용됩니다.
+
+### 캐싱의 동작 방식
+
+- 함수가 처음 호출되면 Streamlit은 함수의 입력 매개변수와 코드 내용을 확인합니다. 만약 같은 매개변수와 코드로 호출된 적이 없다면, 함수가 실행되고 그 결과는 캐시에 저장됩니다.
+- 같은 매개변수로 함수가 다시 호출되면, 캐시된 결과를 바로 반환하여 함수 실행을 건너뛰고, 앱의 실행 속도가 크게 빨라집니다.
+
+### TTL 및 max_entries
+
+- **TTL(Time-to-Live)**: 캐시된 데이터를 일정 시간이 지나면 무효화하고 다시 계산하게 만드는 옵션입니다. 주로 오래된 데이터나 API 호출을 새로고침하는 데 사용됩니다.
+- **max_entries**: 캐시된 항목의 최대 수를 제한하여 메모리 사용을 제어하는 옵션입니다.
+
+### `@st.cache_data`와 `@st.cache_resource`의 선택
+
+- **데이터 캐싱**이 필요할 때는 `@st.cache_data`를 사용하고, **리소스**(예: 머신러닝 모델, 데이터베이스 연결)를 캐싱해야 할 때는 `@st.cache_resource`를 사용하는 것이 좋습니다.
+
+```py
+@st.cache_data(show_spinner="Loading file...")
+def split_file(file):
+    file_content = file.read()
+
+    file_dir = "./.cache/quiz_files"
+    os.makedirs(file_dir, exist_ok=True)
+
+    file_path = f"./.cache/quiz_files/{file.name}"
+    with open(file_path, "wb") as f:
+        f.write(file_content)
+    splitter = CharacterTextSplitter.from_tiktoken_encoder(
+        separator="\n",
+        chunk_size=600,
+        chunk_overlap=100,
+    )
+    loader = UnstructuredFileLoader(file_path)
+    docs = loader.load_and_split(text_splitter=splitter)
+    return docs
+
+@st.cache_data(show_spinner="Making quiz...")
+def run_quiz_chain(_docs, topic):
+    chain = {"context": questions_chain} | formatting_chain | output_parser
+    return chain.invoke(_docs)
+
+@st.cache_data(show_spinner="Searching Wikipedia...")
+def wiki_search(term):
+    retriever = WikipediaRetriever(top_k_results=5)
+    docs = retriever.get_relevant_documents(term)
+    return docs
+
+```
+
+## 9.7 Grading Questions
+
+- form 내부에 form_submit_button가 존재해야한다.
+
+```py
+    response = run_quiz_chain(docs, topic if topic else file.name)
+    with st.form("questions_form"):
+        for question in response["questions"]:
+            st.write(question["question"])
+            value = st.radio(
+                "Select an option.",
+                [answer["answer"] for answer in question["answers"]],
+                index=None,
+            )
+            if {"answer": value, "correct": True} in question["answers"]:
+                st.success("Correct!")
+                st.info(question["description"])
+            elif value is not None:
+                st.error("Wrong!")
+        button = st.form_submit_button()
+
+
+```
+
+## 9.8 [Function Calling](https://platform.openai.com/docs/guides/function-calling)
+
+## 9.9 Conclusions
