@@ -2427,3 +2427,387 @@ def wiki_search(term):
 ## 9.8 [Function Calling](https://platform.openai.com/docs/guides/function-calling)
 
 ## 9.9 Conclusions
+
+# 10 SiteGPT
+
+# 10.0 Introduction
+
+### 1. **LangChain Integration 방식** (웹사이트에서 데이터 수집 및 HTML 파싱)
+
+- LangChain을 사용하면 웹사이트에서 데이터를 쉽게 수집하고, 이를 LLM으로 활용할 수 있습니다.
+- 이 방식에서는 웹사이트의 HTML 코드를 가져와서 필요한 데이터를 추출하고, 이를 문서 형태로 변환한 뒤 LangChain의 다른 기능들과 연계해 사용할 수 있습니다.
+
+#### 주요 단계:
+
+- **웹 스크래핑**: `requests`와 같은 라이브러리를 사용해 웹페이지의 HTML 소스를 가져오거나, BeautifulSoup과 같은 라이브러리로 HTML을 파싱합니다.
+- **HTML 파싱**: 웹페이지에서 원하는 정보(텍스트, 링크 등)를 추출하고 이를 문서화합니다. BeautifulSoup을 사용하여 필요한 태그를 찾아냅니다.
+- **Document화**: 파싱한 HTML 데이터를 LangChain에서 사용할 수 있는 문서 형식으로 변환합니다.
+- **LLM에 적용**: 변환된 문서를 LLM에 전달하여 웹페이지 데이터를 기반으로 질문에 답변하게 합니다.
+
+#### 장점:
+
+- 직접적으로 웹사이트 데이터를 활용하여 문서로 만들고 이를 기반으로 분석할 수 있습니다.
+- 간단한 스크래핑 후 데이터 처리가 가능합니다.
+
+### 2. **Map Re-Rank 방식**
+
+- Map Re-Rank 방식에서는 LLM을 이용해 각 문서에서 개별적으로 답변을 생성한 후, 이 답변을 평가해 최종적으로 가장 점수가 높은 답변을 반환하는 구조입니다.
+
+#### 주요 단계:
+
+- **Document 분할**: 웹에서 가져온 데이터를 여러 문서로 나눕니다.
+- **Map 단계**: 각 문서를 이용하여 LLM이 각각의 질문에 대해 답변을 생성합니다.
+- **Re-Rank 단계**: 생성된 답변들을 LLM이 평가하고, 가장 높은 점수를 받은 응답을 유저에게 반환합니다.
+
+#### 장점:
+
+- 다수의 문서에서 개별적으로 생성된 응답 중 가장 신뢰할 수 있는 답변을 선택할 수 있습니다.
+- 대규모 문서 분석이나, 신뢰도 높은 정보를 제공하는 데 적합합니다.
+
+## 10.1 AsyncChromiumLoader
+
+- SPA로 만들어져있거나 동적인 웹페이지를 크롤링 할 때 사용
+
+### [Playwirght](https://playwright.dev/python/)
+
+- Playwright는 Microsoft에서 개발한 오픈 소스 브라우저 자동화 라이브러리
+- Selenium과 유사하게 브라우저를 제어할 가능
+- Playwright는 여러 브라우저(Chromium, Firefox, WebKit)를 지원하며, 안정적이고 빠른 성능을 자랑한다.
+- 주로 브라우저 테스트, 웹 스크래핑, 자동화 작업 등에 사용된다.
+
+- 주요 기능
+  - 다양한 브라우저 지원 (Chromium, Firefox, WebKit)
+  - Headless 모드 지원
+  - 비동기(Async) 및 동기(Sync) API 제공
+  - 강력한 디버깅 도구
+
+```bash
+$ playwirght install
+```
+
+### Async Chromium
+
+- Async Chromium은 Playwright의 Chromium 브라우저 자동화를 비동기적으로 제어하는 방식
+- 이를 통해 비동기적으로 웹 페이지를 로드하고 데이터를 처리할 수 있어, 성능을 최적화할 수 있다.
+
+```py
+from langchain.document_loaders import AsyncChromiumLoader
+from langchain.document_transformers import Html2TextTransformer
+import streamlit as st
+
+html2text_transformer = Html2TextTransformer()
+
+with st.sidebar:
+    url = st.text_input(
+        "URL을 입력해주세요.",
+        placeholder="https://example.com",
+    )
+
+if url:
+    with st.spinner("잠시만 기다려주세요."):
+        # 입력한 Url 리스트를 순회하며, 자동으로 Playwright의 Chromium 브라우저로 비동기적으로 웹 페이지를 로드하고 데이터를 가져온다.
+        loader = AsyncChromiumLoader([url])
+        docs = loader.load()
+
+        # playwright로 가져온 웹페이지 html 데이터를 text로 변환한다.
+        transformed = html2text_transformer.transform_documents(docs)
+    st.write(docs)
+
+```
+
+## 10.2 [SitemapLoader](https://python.langchain.com/v0.2/docs/integrations/document_loaders/sitemap/)
+
+- `WebBaseLoader`에서 확장된 `SitemapLoader`는 지정된 URL에서 사이트맵을 로드한 다음 사이트맵의 모든 페이지를 스크랩하고 로드하여 각 페이지를 문서로 반환
+- 스크래핑은 병렬로 수행된다.
+  - 병렬 요청에는 합리적인 제한이 있으며 기본적으로 초당 2회로 설정되어 있다.
+- 만약 선의의 시민이 되는 것에 대해 걱정하지 않는다면 또는 스크랩 대상 서버를 제어하거나 부하에 신경 쓰지 않는다면 requests_per_second 매개변수를 변경하여 최대 동시 요청을 늘릴 수 있다.
+- 그리고 requests_kwargs를 사용하여 요청을 보낼 때 kwargs를 전달할 수 있다.
+  - 이러한 변경은 스크래핑 프로세스를 가속화할 수 있지만 서버에게서 차단할 수 있으므로 주의가 필요
+
+```py
+# 사이트맵으로 스크랩하고 변환하는 데이터 양이 많기 때문에 캐싱 진행
+@st.cache_data(show_spinner="Loading website...")
+def load_website(url):
+    loader = SitemapLoader(url)
+    loader.requests_per_second = 5
+    docs = loader.load()
+    return docs
+
+
+if url:
+    if ".xml" not in url:
+        with st.sidebar:
+            st.error("Please write down a Sitemap URL.")
+    else:
+        docs = load_website(url)
+        st.write(docs)
+
+```
+
+## 10.3 Parsing Function
+
+### [Filtering sitemap URLs](https://python.langchain.com/v0.2/docs/integrations/document_loaders/sitemap/#filtering-sitemap-urls)
+
+```py
+from langchain.document_loaders import SitemapLoader, text
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+import streamlit as st
+
+def parse_page(soup):
+    # beautifulSoup을 이용해서 html 태그를 선택할 수 있다.
+    header = soup.find("header")
+    footer = soup.find("footer")
+    if header:
+        header.decompose() #  header 태그가 제거된 HTML 문서를 파싱
+    if footer:
+        footer.decompose() #  footer 태그가 제거된 HTML 문서를 파싱
+    return (
+        str(soup.get_text())
+        .replace("\n", " ") # \n를 모두 공백으로 변환
+        .replace("\xa0", " ") # \xa0n를 모두 공백으로 변환
+        .replace("CloseSearch Submit Blog", "") # 필요하지않은 특정 문구를 모두 공백으로 변환
+    )
+
+@st.cache_data(show_spinner="Loading website...")
+def load_website(url):
+    splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
+        chunk_size=1000, # 문서를 일정 크기(chunk_size=1000)로 분할
+        chunk_overlap=200,
+    )
+    loader = SitemapLoader(
+        url,
+        filter_urls=[  #  특정 URL을 필터링
+            r"^(.*\/blog\/).*",
+        ],
+        parsing_function=parse_page,
+    )
+    #  크롤링 시의 요청 속도를 제어 (2초마다 요청)
+    loader.requests_per_second = 2
+
+    # 마지막으로 로드된 문서를 주어진 분할 기준으로 분할한 후 반환
+    docs = loader.load_and_split(text_splitter=splitter)
+    return docs
+```
+
+## 10.4 Map Re Rank Chain
+
+- 이는 각 문서에 대해 LLM을 호출하여 답변뿐만 아니라 얼마나 자신 있는지에 대한 점수를 산출하도록 요청합니다.
+- 그러면 신뢰도가 가장 높은 답변이 반환됩니다.
+- 문서가 많지만 정제 및 축소 메서드처럼 답변을 결합하지 않고 단일 문서만을 기반으로 답변하려는 경우에 유용합니다.
+
+### [MapRerankDocumentsChain](https://api.python.langchain.com/en/latest/chains/langchain.chains.combine_documents.map_rerank.MapRerankDocumentsChain.html#langchain.chains.combine_documents.map_rerank.MapRerankDocumentsChain)
+
+- 문서 위에 체인을 매핑하여 문서를 결합한 다음 결과를 재순위화(reranking)합니다.
+- 이 알고리즘은 각 입력 문서에 대해 LLMChain을 호출합니다.
+- LLMChain에는 결과를 답변(answer_key)과 점수(rank_key)로 구문 분석하는 OutputParser가 있을 것으로 예상됩니다.
+- 그러면 점수가 가장 높은 답이 반환됩니다.
+
+```py
+@st.cache_data(show_spinner="Loading website...")
+def load_website(url):
+    splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
+        chunk_size=1000,
+        chunk_overlap=200,
+    )
+    loader = SitemapLoader(
+        url,
+        filter_urls=[
+            r"^(.*\/ai-gateway\/).*",
+            r"^(.*\/vectorize\/).*",
+            r"^(.*\/workers-ai\/).*",
+        ],
+        parsing_function=parse_page,
+    )
+    loader.requests_per_second = 2
+    docs = loader.load_and_split(text_splitter=splitter)
+    vector_store = FAISS.from_documents(docs, OpenAIEmbeddings())
+    return vector_store.as_retriever()
+
+```
+
+#### FAISS from_documents:
+
+- `vector_store = FAISS.from_documents(docs, OpenAIEmbeddings())`는 문서의 벡터 임베딩을 생성하는 과정입니다.
+- 여기서 FAISS는 Facebook AI가 만든 벡터 검색 라이브러리로, 대규모 문서나 데이터를 효율적으로 검색할 수 있게 해줍니다.
+- 주어진 문서 리스트인 docs를 OpenAIEmbeddings를 이용해 벡터화하고, 이를 검색 가능한 벡터 스토어에 저장합니다.
+
+#### OpenAIEmbeddings:
+
+- 이 클래스는 OpenAI의 모델을 사용하여 텍스트 문서의 벡터 표현을 생성합니다.
+- 이 벡터는 숫자 배열로, 문서의 의미적 정보를 담고 있습니다. 이 벡터를 생성하면, 문서 간의 의미적 유사성을 비교할 수 있습니다.
+
+- **`FAISS`**:
+
+  - FAISS는 대규모 벡터 간의 유사성을 매우 빠르게 찾는 도구입니다.
+  - 이 도구는 벡터화된 문서를 저장하고, 나중에 질의(Query)를 통해 가장 유사한 문서를 찾아낼 수 있도록 돕습니다.
+  - 예를 들어, 사용자가 질문을 하면 그 질문도 벡터로 변환되고, 벡터화된 문서와 비교하여 가장 유사한 문서를 반환합니다.
+
+- **`as_retriever()`**:
+  - `return vector_store.as_retriever()`는 FAISS 벡터 스토어를 retriever로 변환하여 반환하는 부분입니다.
+  - retriever는 질문(질의)을 벡터화하여 저장된 문서와 비교한 후, 가장 관련성 높은 문서를 찾아내는 역할을 합니다.
+  - 즉, 유저가 질의하면 가장 유사한 문서를 검색해서 반환할 수 있도록 준비합니다.
+
+## 10.5 Map Re Rank Chain part Two
+
+### 전체 코드
+
+```py
+from langchain.document_loaders import SitemapLoader  # SitemapLoader를 사용하여 웹사이트에서 사이트맵을 로드
+from langchain.schema.runnable import RunnableLambda, RunnablePassthrough  # RunnableLambda와 RunnablePassthrough는 체인 처리에 사용됨
+from langchain.text_splitter import RecursiveCharacterTextSplitter  # 문서를 일정 크기로 분할하기 위한 텍스트 분할기
+from langchain.vectorstores.faiss import FAISS  # FAISS 벡터 저장소를 사용하여 문서를 벡터화
+from langchain.embeddings import OpenAIEmbeddings  # 문서를 임베딩하기 위해 OpenAI 임베딩 사용
+from langchain.chat_models import ChatOpenAI  # OpenAI의 언어 모델을 사용
+from langchain.prompts import ChatPromptTemplate  # 템플릿을 생성하기 위한 ChatPromptTemplate
+import streamlit as st  # Streamlit을 사용하여 웹 앱을 개발
+
+# OpenAI 언어 모델을 생성하여 추론에 사용
+llm = ChatOpenAI(
+    temperature=0.1,  # 모델의 생성 결과의 다양성을 제어하는 온도값 설정
+)
+
+# 사용자 질문에 대한 답변과 점수를 제공하는 프롬프트 템플릿
+answers_prompt = ChatPromptTemplate.from_template(
+    """
+    주어진 context만을 사용하여 사용자의 질문에 답변하세요. 답변할 수 없는 경우, '모른다'고 말하고 절대 추측하지 마세요.
+    그런 다음 답변에 0점에서 5점 사이의 점수를 부여하세요. 답변이 사용자의 질문을 정확히 답하면 점수가 높아야 하고, 그렇지 않으면 낮아야 합니다.
+    점수가 0점일지라도 항상 점수를 포함해야 합니다.
+    Context: {context}
+    """
+)
+
+# 주어진 문서(doc)와 질문(question)을 기반으로 답변을 생성하는 함수
+def get_answers(inputs):
+    docs = inputs["docs"]  # 입력받은 문서들
+    question = inputs["question"]  # 입력받은 질문
+    answers_chain = answers_prompt | llm  # 프롬프트와 언어 모델을 연결하여 체인 생성
+    return {
+        "question": question,
+        "answers": [
+            {
+                "answer": answers_chain.invoke(
+                    {"question": question, "context": doc.page_content}  # 문서의 내용(page_content)과 질문을 사용해 답변 생성
+                ).content,
+                "source": doc.metadata["source"],  # 문서의 출처
+                "date": doc.metadata["lastmod"],  # 문서의 마지막 수정일
+            }
+            for doc in docs  # 각 문서에 대해 위 과정을 반복
+        ],
+    }
+
+# 가장 적합한 답변을 선택하기 위한 프롬프트 템플릿
+choose_prompt = ChatPromptTemplate.from_messages(
+    [
+        (
+            "system",
+            """
+            사용자 질문에 대답하기 위해 반드시 아래의 미리 제공된 답변만을 사용하세요.
+            가장 점수가 높은 (더 유용한) 답변을 사용하고, 최신 답변을 우선적으로 선택하세요.
+            출처를 반드시 인용하고, 답변에 포함된 출처는 변경하지 말고 그대로 반환하세요.
+            답변들: {answers}
+            """,
+        ),
+        ("human", "{question}"),  # 질문을 템플릿에 넣음
+    ]
+)
+
+# 주어진 답변 중 가장 적합한 답변을 선택하는 함수
+def choose_answer(inputs):
+    answers = inputs["answers"]  # 입력받은 답변 목록
+    question = inputs["question"]  # 입력받은 질문
+    choose_chain = choose_prompt | llm  # 답변 선택을 위한 체인 생성
+    condensed = "\n\n".join(
+        f"{answer['answer']}\nSource:{answer['source']}\nDate:{answer['date']}\n"
+        for answer in answers  # 각 답변에 대해 내용을 구성
+    )
+    return choose_chain.invoke(
+        {
+            "question": question,  # 질문과 압축된 답변 목록을 체인에 전달
+            "answers": condensed,
+        }
+    )
+
+# BeautifulSoup을 사용하여 페이지의 헤더와 푸터를 제거하고 텍스트만 반환하는 함수
+def parse_page(soup):
+    header = soup.find("header")
+    footer = soup.find("footer")
+    if header:
+        header.decompose()  # 헤더를 제외
+    if footer:
+        footer.decompose()  # 푸터를 제외
+    return (
+        str(soup.get_text())  # 텍스트만 반환
+        .replace("\n", " ")  # 줄바꿈을 공백으로 변환
+        .replace("\xa0", " ")  # 특수 문자를 공백으로 변환
+    )
+
+# Streamlit 캐시를 사용하여 웹사이트를 로드하는 함수
+@st.cache_data(show_spinner="Loading website...")  # 캐시를 사용하여 웹사이트 로딩 중 스피너를 표시
+def load_website(url):
+    splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
+        chunk_size=1000,  # 문서를 1000 글자 단위로 분할
+        chunk_overlap=200,  # 분할된 문서 간 중복 영역 설정
+    )
+    loader = SitemapLoader(
+        url,
+        filter_urls=[  # 불필요한 URL 필터링
+            r"^(.*\/ai-gateway\/).*",
+            r"^(.*\/vectorize\/).*",
+            r"^(.*\/workers-ai\/).*",
+        ],
+        parsing_function=parse_page,  # 페이지를 파싱하는 함수 지정
+    )
+    loader.requests_per_second = 2  # 요청 속도 설정
+    docs = loader.load_and_split(text_splitter=splitter)  # 문서를 로드하고 분할
+    vector_store = FAISS.from_documents(docs, OpenAIEmbeddings())  # 문서를 벡터화하여 저장
+    return vector_store.as_retriever()  # 벡터 저장소에서 검색 가능한 retriever 객체 반환
+
+# Streamlit 페이지 설정
+st.set_page_config(
+    page_title="SiteGPT",  # 페이지 제목 설정
+    page_icon="🖥️",  # 페이지 아이콘 설정
+)
+
+# 페이지 설명
+st.markdown(
+    """
+    # SiteGPT
+
+    Ask questions about the content of a website.
+
+    Start by writing the URL of the website on the sidebar.
+    """
+)
+
+# 사용자가 입력한 URL을 사이드바에 표시
+with st.sidebar:
+    url = st.text_input(
+        "Write down a URL",
+        placeholder="https://example.com",  # 기본 URL 입력 안내
+    )
+
+# URL이 입력되었을 때 실행되는 로직
+if url:
+    if ".xml" not in url:  # URL이 XML 형식의 사이트맵이 아닐 경우 오류 메시지 표시
+        with st.sidebar:
+            st.error("Sitemap URL을 입력해주세요.")
+    else:
+        retriever = load_website(url)  # 사이트맵을 로드하고 retriever 객체 생성
+        query = st.text_input("웹사이트에 대해 질문해주세요.")  # 사용자의 질문 입력
+        if query:
+            # 체인 생성: 문서를 가져와 답변을 생성하고 선택
+            chain = (
+                {
+                    "docs": retriever,  # 문서를 가져옴
+                    "question": RunnablePassthrough(),  # 질문을 그대로 전달
+                }
+                | RunnableLambda(get_answers)  # 답변을 생성
+                | RunnableLambda(choose_answer)  # 답변을 선택
+            )
+            result = chain.invoke(query)  # 체인 실행하여 결과 반환
+            st.markdown(result.content.replace("$", "\$"))  # 결과를 출력 (마크다운 처리)
+
+
+```
+
+## 10.6 Code Challenge
