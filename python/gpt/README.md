@@ -2811,3 +2811,85 @@ if url:
 ```
 
 ## 10.6 Code Challenge
+
+# 12 InvestorGPT
+
+## 12.0 Introduction
+
+## [Agent](https://python.langchain.com/docs/modules/agents/)
+
+- 에이전트의 핵심 아이디어는 언어 모델을 사용하여 수행할 일련의 동작을 선택하는 것
+- 체인에서는 일련의 동작이 코드에 하드코딩되어 있다.
+- 그러나 에이전트에서는 언어 모델이 어떤 동작을 취할지 및 어떤 순서로 취할지를 결정하는 추론 엔진으로 사용된다.
+
+다음은 다음 단계를 결정하는데 책임을 지고 있는 체인이다. 이는 언어 모델과 프롬프트에 의해 제어된다. 이 체인의 입력은 다음과 같습니다:
+
+1. 도구(Tools): 사용 가능한 도구에 대한 설명
+2. 사용자 입력(User Input): 고수준 목표
+3. 중간 단계(Intermediate Steps): 사용자 입력을 달성하기 위해 이전에 순서대로 실행된 (동작, 도구 출력) 쌍
+
+- 출력은 다음 동작 또는 사용자에게 보낼 최종 응답(AgentActions 또는 AgentFinish).
+- 동작은 도구와 해당 도구에 대한 입력을 지정합니다.
+- 다양한 에이전트는 추론에 대한 다양한 프롬프팅 스타일, 입력 인코딩 방식 및 출력 파싱 방식을 가지고 있다.
+
+## 12.1 Your First Agent
+
+- OpenAI의 언어 모델, 특히 GPT 계열 모델은 주로 자연어 처리와 언어 분석을 기반으로 동작하며, 사람과의 대화를 통해 정보를 제공하거나 문장을 생성하는 데에 강점을 가지고 있다. 하지만 수학적 계산이나 복잡한 연산을 수행하는 데에는 한계가 있다.
+
+- 아래의 코드는 잘못된 결과를 도출한다.
+
+```py
+def plus(a, b):
+    return a + b
+
+
+agent = initialize_agent(
+    llm=llm,  # LLM(대형 언어 모델)인 llm을 에이전트에 전달
+    verbose=True,  # 상세한 출력 로그를 콘솔에 표시
+    agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION,  # Structured Chat 방식의 Zero-Shot React 에이전트 타입 선택 / 구조화된 채팅 응답 형식에 따라 동작하며, 더 명확한 구조를 요구합니다.
+    tools=[  # 에이전트가 사용할 도구 목록을 정의
+        StructuredTool.from_function(  # StructuredTool을 생성하여 함수 plus를 도구로 등록
+            func=plus,  # 더하기 계산을 수행하는 함수 plus를 에이전트가 사용할 수 있게 함
+            name="Sum Calculator",  # 도구의 이름을 "Sum Calculator"로 지정
+            description="Use this to perform sums of two numbers. This tool take two arguments, both should be numbers.",  # 이 도구가 수행할 작업 설명
+        ),
+    ],
+)
+```
+
+## 12.2 How Do Agents Work
+
+## 12.3 Zero-shot ReAct Agent
+
+```py
+def plus(inputs):
+    a, b = inputs.split(",")
+    return float(a) + float(b)
+
+agent = initialize_agent(
+    llm=llm,  # LLM(대형 언어 모델)인 llm을 에이전트에 전달
+    verbose=True,  # 상세한 출력 로그를 콘솔에 표시
+    agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,  # Zero-Shot React 방식의 에이전트 타입 선택 / 일반적인 방식으로 동작하며, 구조화된 채팅 형식에 덜 의존합니다.
+
+    handle_parsing_errors=True,  # 구문 분석 오류를 처리
+    tools=[  # 에이전트가 사용할 도구 목록을 정의
+        Tool.from_function(  # Tool을 생성하여 함수 plus를 도구로 등록
+            func=plus,  # 더하기 계산을 수행하는 함수 plus를 에이전트가 사용할 수 있게 함
+            name="Sum Calculator",  # 도구의 이름을 "Sum Calculator"로 지정
+            description="Use this to perform sums of two numbers. Use this tool by sending a pair of numbers separated by a comma.\nExample:1,2",  # 이 도구가 수행할 작업 설명
+        ),
+    ],
+)
+```
+
+## 12.4 OpenAI Functions Agent
+
+## 12.5 Search Tool
+
+## 12.6 Stock Information Tools
+
+## 12.7 Agent Prompt
+
+## 12.8 SQLDatabaseToolkit
+
+## 12.9 Conclusions
