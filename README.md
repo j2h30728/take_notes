@@ -39,12 +39,21 @@
 - [50 projects](./mini-project/50projects/)
 - [VanillaJS로 만들기](./mini-project/VanillaJS/)
 
-### Algorithm
+### [Algorithm](./algorithm/)
 
-- [정렬 알고리즘](./algorithm/정렬)
-- [그리디(탐욕적) 알고리즘](./algorithm/그리디-탐욕적)
-- [이진탐색 알고리즘](./algorithm/이진탐색/README.md)
-- [백트래킹 알고리즘](./algorithm/백트래킹/README.md)
+#### 자료구조
+
+- [스택](./algorithm//스택/)
+- [큐](./algorithm//큐/)
+- [그래프](./algorithm//그래프/)
+- [트리](./algorithm//트리/)
+- [해시](./algorithm//해시/)
+
+#### 알고리즘
+
+- [백트래킹](./algorithm//백트래킹/)
+- [정렬](./algorithm//정렬/)
+- [집합](./algorithm//집합/)
 
 ### Python
 
