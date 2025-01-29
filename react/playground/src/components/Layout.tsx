@@ -12,8 +12,11 @@ const Layout = () => {
         <Navigate $pathname={pathname === ROUTE_PATH.ROOT} onClick={() => navigate(ROUTE_PATH.ROOT)}>
           Home
         </Navigate>
-        <Navigate $pathname={pathname.slice(1) === ROUTE_PATH.CALENDAR} onClick={() => navigate(ROUTE_PATH.CALENDAR)}>
+        <Navigate $pathname={pathname === ROUTE_PATH.CALENDAR} onClick={() => navigate(ROUTE_PATH.CALENDAR)}>
           Calendar
+        </Navigate>
+        <Navigate $pathname={pathname === ROUTE_PATH.DND} onClick={() => navigate(ROUTE_PATH.DND)}>
+          Drag and Drop
         </Navigate>
       </Navigation>
       <Wrapper>
@@ -42,6 +45,7 @@ const Navigation = styled.nav`
 const Wrapper = styled.div`
   margin-left: 10%;
   padding: 30px;
+  width: calc(100wh - 10%);
 `;
 
 const Navigate = styled.button<{ $pathname: boolean }>`
