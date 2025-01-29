@@ -5,6 +5,7 @@ import Calendar from "../pages/Calendar/index";
 import Layout from "../components/Layout";
 import Home from "../pages/Home";
 import DragAndDrop from "../pages/DND";
+import HooksComponents from "../pages/Hooks";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
       {
         element: <DragAndDrop />,
         path: ROUTE_PATH.DND,
+      },
+      {
+        element: <HooksComponents />,
+        path: ROUTE_PATH.HOOKS,
       },
     ],
   },

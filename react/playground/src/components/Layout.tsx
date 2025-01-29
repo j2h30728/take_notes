@@ -6,18 +6,15 @@ import ROUTE_PATH from "../router/constants";
 const Layout = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const ROUTE_PATHS = Object.entries(ROUTE_PATH);
   return (
     <Container>
       <Navigation>
-        <Navigate $pathname={pathname === ROUTE_PATH.ROOT} onClick={() => navigate(ROUTE_PATH.ROOT)}>
-          Home
-        </Navigate>
-        <Navigate $pathname={pathname === ROUTE_PATH.CALENDAR} onClick={() => navigate(ROUTE_PATH.CALENDAR)}>
-          Calendar
-        </Navigate>
-        <Navigate $pathname={pathname === ROUTE_PATH.DND} onClick={() => navigate(ROUTE_PATH.DND)}>
-          Drag and Drop
-        </Navigate>
+        {ROUTE_PATHS.map(([name, path]) => (
+          <Navigate $pathname={pathname === path} onClick={() => navigate(path)}>
+            {name}
+          </Navigate>
+        ))}
       </Navigation>
       <Wrapper>
         <Outlet />
