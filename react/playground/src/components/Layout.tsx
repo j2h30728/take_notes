@@ -11,7 +11,7 @@ const Layout = () => {
     <Container>
       <Navigation>
         {ROUTE_PATHS.map(([name, path]) => (
-          <Navigate $pathname={pathname === path} onClick={() => navigate(path)}>
+          <Navigate key={name} $pathname={pathname === path} onClick={() => navigate(path)}>
             {name}
           </Navigate>
         ))}

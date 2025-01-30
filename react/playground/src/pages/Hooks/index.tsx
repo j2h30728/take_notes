@@ -1,10 +1,21 @@
 import styled from "styled-components";
+import Input from "./components/Input";
+import Tabs from "./components/Tabs";
+import useTitle from "./hooks/useTitle";
+import ClickButton from "./components/ClickButton";
 
 const HooksComponents = () => {
+  const titleUpdate = useTitle("Loading...");
+  setTimeout(() => titleUpdate("hooks"), 5000);
+
   return (
     <>
       <Title>Hooks</Title>
-      <Body>내용</Body>
+      <Body>
+        <Input />
+        <Tabs />
+        <ClickButton />
+      </Body>
     </>
   );
 };
@@ -21,6 +32,11 @@ const Body = styled.div`
 
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  gap: 20px;
+
+  & > div {
+    border: 1px solid gray;
+    padding: 10px;
+    border-radius: 10px;
+  }
 `;
