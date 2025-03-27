@@ -47,10 +47,11 @@ const DayWrapper = styled.div`
   grid-template-columns: repeat(7, minmax(50px, 1fr));
   grid-row-gap: 15px;
 `;
+
 const CalendarItem = styled.div<{ $isSunday: boolean }>`
   display: flex;
   justify-content: center;
-  color: ${({ theme, $isSunday }) => ($isSunday ? theme.colors.error : theme.colors["accent-content"])};
+  color: ${(props) => (props.$isSunday ? props.theme.colors.error : props.theme.colors["accent-content"])};
 `;
 
 const Day = styled.div<{

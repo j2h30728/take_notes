@@ -16,6 +16,10 @@
 
 ##### - [Authentication 구현 설명(iron-session, bcrypt, middleware)](./next.js-authentication.md)
 
+##### - [prisma로 만드는 페이지네이션 구현](./next.js-pagination.md)
+
+##### - [server actions과 cloud flare image, zod, RHF를 이용한 upload 구현](./next.js-upload.md)
+
 ### next.js 실습
 
 ##### - [Server Actions 실습](./server-actions/)

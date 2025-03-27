@@ -63,6 +63,7 @@ wsServer.on("connection", (socket) => {
   });
 
   // 클라이언트의 연결이 끊기기 시작할 때 실행된다. 클라이언트가 속한 모든 방에서 'bye' 이벤트를 전송.
+  // countRoom(room) - 1 : 해당 클라이언트가 빠져나간 숫자를 의미
   socket.on("disconnecting", () => {
     socket.rooms.forEach((room) => socket.to(room).emit("bye", socket.nickname, countRoom(room) - 1));
   });

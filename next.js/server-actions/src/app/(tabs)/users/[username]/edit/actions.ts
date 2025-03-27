@@ -1,5 +1,6 @@
 "use server";
 
+import { getUserAuthInfo } from "@/service/userService";
 import db from "@/utils/db";
 import { profileSchema } from "@/utils/schema";
 import { getSession } from "@/utils/session";
@@ -26,7 +27,7 @@ export async function editProfile(formData: FormData) {
 
   if (result.data && result.data.newPassword) {
     const hashedNewPassword = await bcrypt.hash(result.data?.newPassword, 12);
-    const user = await db.user.update({
+    await db.user.update({
       where: {
         id: session.id,
       },
@@ -37,19 +38,19 @@ export async function editProfile(formData: FormData) {
         bio: result.data?.bio,
       },
     });
-    console.log("newpassword:", user);
     return redirect(`/users`);
   }
-  const user = await db.user.update({
+  const loggedInUser = await getUserAuthInfo();
+  await db.user.update({
     where: {
       id: session.id,
     },
     data: {
       email: result.data?.email,
       username: result.data?.username,
+      password: loggedInUser?.password,
       bio: result.data?.bio,
     },
   });
-  console.log("user:", user);
   return redirect(`/users`);
 }

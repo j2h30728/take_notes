@@ -9,7 +9,7 @@ interface AiComment {
 }
 
 export default function AiComment({ tweetId }: { tweetId: number }) {
-  const [comment, setComment] = useState<AiComment | null>(null);
+  const [aiComment, setAiComment] = useState<AiComment | null>(null);
 
   useEffect(() => {
     const fetchInitialComment = async () => {
@@ -21,7 +21,7 @@ export default function AiComment({ tweetId }: { tweetId: number }) {
       if (error) {
         console.error("Error fetching comment:", error);
       } else {
-        setComment(data);
+        setAiComment(data);
       }
     };
 
@@ -33,7 +33,7 @@ export default function AiComment({ tweetId }: { tweetId: number }) {
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "AiComment", filter: `tweetId=eq.${tweetId}` },
         (payload: { new: AiComment }) => {
-          setComment(payload.new);
+          setAiComment(payload.new);
           supabase.removeChannel(channel);
         }
       )
@@ -42,15 +42,15 @@ export default function AiComment({ tweetId }: { tweetId: number }) {
       supabase.removeChannel(channel);
     };
   }, [tweetId]);
-
-  if (comment === null) {
+  console.log(aiComment);
+  if (aiComment === null) {
     return <div>Loading</div>;
   }
 
   return (
     <div className="bg-red-200 w-full">
-      <h3>{Array.isArray(comment.AiBot) ? comment.AiBot[0].name : comment.AiBot.name}</h3>
-      <span>{comment?.text}</span>
+      <h3>{Array.isArray(aiComment.AiBot) ? aiComment.AiBot[0].name : aiComment.AiBot.name}</h3>
+      <span>{aiComment?.text}</span>
     </div>
   );
 }

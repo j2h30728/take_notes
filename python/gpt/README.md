@@ -2893,3 +2893,46 @@ agent = initialize_agent(
 ## 12.8 SQLDatabaseToolkit
 
 ## 12.9 Conclusions
+
+# 14 Assistants API
+
+## 14.0 Introduction
+
+### Assistants API란
+
+- Assistants API는 OpenAI에서 제공하는 API
+- 개발자가 자신의 애플리케이션에 AI 어시스턴트를 통합하고 관리할 수 있게 해줍니다.
+- 이 API를 통해 어시스턴트는 사용자 질의에 응답하기 위해 모델, 도구, 파일 등을 활용할 수 있습니다.
+
+### Assistants API의 주요 기능
+
+- **모델과 도구 활용**: Assistants는 OpenAI의 모델과 도구(코드 인터프리터, 파일 검색, 함수 호출 등)를 사용해 사용자 질의에 응답할 수 있습니다.
+- **병렬 도구 접근**: Assistants는 여러 도구를 동시에 사용할 수 있으며, OpenAI에서 제공하는 도구나 사용자가 만든 도구와도 연동이 가능합니다.
+- **지속적인 대화 관리(Thread)**: 대화는 "Thread"로 저장되어 사용자가 대화했던 내용이 유지되고, 대화가 너무 길어지면 자동으로 중요한 내용만 남도록 관리됩니다.
+- **파일 접근 및 생성**: Assistants는 여러 포맷의 파일을 다룰 수 있습니다. 도구를 사용해 파일을 생성하거나, 특정 파일을 참조하는 응답을 생성할 수 있습니다.
+
+### 주요 객체 설명
+
+- **Assistant(어시스턴트)**: OpenAI 모델과 도구를 활용해 사용자와 상호작용하는 AI.
+- **Thread(스레드)**: 사용자와 어시스턴트 간의 대화를 저장하는 객체.
+- **Message(메시지)**: 사용자가 보낸 메시지 또는 어시스턴트가 생성한 메시지.
+- **Run(런)**: 어시스턴트가 스레드 내에서 작업을 수행하는 과정. 모델 호출과 도구 사용이 포함됨.
+- **Run Step(런 스텝)**: 어시스턴트가 Run 동안 수행한 세부 작업.
+
+## 14.1 How Assistants Work
+
+## 14.2 Creating The Assistant
+
+## 14.3 Assistant Tools
+
+## 14.4 Running A Thread
+
+## 14.5 Assistant Actions
+
+## 14.6 Recap
+
+## 14.7 Code Challenge
+
+## 14.8 RAG Assistant
+
+## 14.9 Conclusions

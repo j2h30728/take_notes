@@ -316,4 +316,63 @@ export default function AddTweets() {
 
 ## 11.8 RHF Refactor
 
+### [React Hook Form](https://react-hook-form.com)
+
+```bash
+npm install react-hook-form
+
+```
+
+### [@hookform/resolvers](https://www.npmjs.com/package/@hookform/resolvers)
+
+```bash
+npm i @hookform/resolvers
+
+```
+
+### zod [Type inference](https://zod.dev/?id=type-inference)
+
+- Zod는 타입스크립트에서 스키마 기반의 유효성 검사를 수행하는 라이브러리
+- Zod를 사용하면 스키마로부터 타입을 추론할 수 있다.
+
+#### 기본적인 타입 추론
+
+Zod 스키마에서 타입을 추론하려면 `z.infer<typeof mySchema>`를 사용
+
+```typescript
+export type UploadTweetType = z.infer<typeof tweetSchema>;
+
+const A = z.string();
+type A = z.infer<typeof A>; // A는 string 타입으로 추론
+
+const u: A = 12; // TypeError: 12는 string 타입이 아니다.
+const u: A = "asdf"; // 정상적으로 컴파일됨
+```
+
+#### 변환(Transforms)에 대한 타입 추론
+
+- Zod에서는 스키마에 변환을 추가할 수 있다.
+- 변환을 사용하면 입력 타입과 출력 타입이 다를 수 있다.
+- 예를 들어, `z.string().transform(val => val.length)` 스키마는 문자열을 입력받아 숫자(문자열의 길이)를 출력한다.
+
+이 경우, Zod 스키마는 내부적으로 두 가지 타입을 추적한다:
+
+- **입력 타입 (input type)**: 스키마가 입력으로 받을 수 있는 타입
+- **출력 타입 (output type)**: 스키마가 출력하는 타입
+
+```typescript
+const stringToNumber = z.string().transform((val) => val.length);
+
+// 입력 타입을 추출합니다.
+type input = z.input<typeof stringToNumber>; // string
+
+// 출력 타입을 추출합니다.
+type output = z.output<typeof stringToNumber>; // number
+
+// `z.infer`는 출력 타입을 반환합니다!
+type inferred = z.infer<typeof stringToNumber>; // number
+```
+
+- `z.infer`가 **출력 타입**을 반환한다는 것이다. 즉, `z.infer`는 `z.output`과 동일한 결과를 반환한다.
+
 ## 11.9 Recap

@@ -53,7 +53,7 @@ npm install -D webpack webpack-cli webpack-dev-server html-webpack-plugin clean-
 ##### Webpack 플러그인
 
 - `html-webpack-plugin`: HTML 파일을 생성하고, 번들링된 JavaScript 파일을 자동으로 포함시켜주는 플러그인
-- `clean-webpack-plugin`: 빌드 이전에 output 디렉토리를 정리해주는 플러그
+- `clean-webpack-plugin`: 빌드 이전에 output 디렉토리를 정리해주는 플러그인
 - `mini-css-extract-plugin`: CSS 파일을 별도의 파일로 추출해주는 플러그인. style-loader 대신 프로덕션 환경에서 사용됨
 
 ##### Babel 및 관련 도구

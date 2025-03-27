@@ -1,13 +1,13 @@
 "use client";
 
 import { editProfile } from "@/app/(tabs)/users/[username]/edit/actions";
+import { useForm } from "react-hook-form";
 import FormButton from "@/components/form-button";
 import FormInput from "@/components/form-input";
 import { InitialUserInformationType } from "@/service/userService";
 import { profileSchema, UserInformationType } from "@/utils/schema";
 import { DocumentTextIcon, EnvelopeIcon, KeyIcon, LockClosedIcon, UserIcon } from "@heroicons/react/24/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 
 export default function ProfileEditForm({
   initialUserInformation,

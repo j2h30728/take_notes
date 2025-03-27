@@ -8,10 +8,6 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-      },
       keyframes: {
         infiniteSlide: {
           "0%": { transform: "translateX(0%)" },
@@ -19,7 +15,7 @@ const config: Config = {
         },
       },
       animation: {
-        infiniteSlide: "infiniteSlide 15s linear infinite",
+        infiniteSlide: "infiniteSlide 20s linear infinite",
       },
     },
   },

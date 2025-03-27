@@ -8,7 +8,8 @@ import express from "express";
 // Express 애플리케이션 인스턴스를 생성
 const app = express();
 
-// Pug를 뷰 엔진으로 설정. Pug는 서버 사이드에서 HTML을 동적으로 생성할 수 있게 해주는 템플릿 엔진
+// Pug를 뷰 엔진으로 설정.
+// Pug : 서버 사이드에서 HTML을 동적으로 생성할 수 있게 해주는 템플릿 엔진
 app.set("view engine", "pug");
 app.set("views", __dirname + "/views");
 
@@ -28,14 +29,14 @@ const server = http.createServer(app);
 // 웹 서버와 WebSocket 서버가 같은 포트를 공유하게 되며,(두 서버가 통합되어있다고 볼 수 있음.) 설정을 단순화하고, 리소스 사용을 효율적으로 만든다.
 const wss = new WebSocket.Server({ server });
 
-// 연결된 WebSocket 클라이언트를 추적하기 위한 배열입니다.
+// 연결된 WebSocket 클라이언트를 추적하기 위한 배열.
 const sockets = [];
 
-// WebSocket 서버에 클라이언트가 연결되었을 때 실행되는 이벤트 리스너입니다.
+// WebSocket 서버에 클라이언트가 연결되었을 때 실행
 wss.on("connection", (socket) => {
   sockets.push(socket); // 연결된 클라이언트를 배열에 추가 (연결된 클라이언트에게 동일한 메시지 전달하기 위함)
 
-  socket["nickname"] = "Anonymous"; // 기본적으로 클라이언트에 "Anonymous"이라는 닉네임을 할당
+  socket["nickname"] = "Anonymous"; // 기본적으로 연결된 클라이언트에 "Anonymous"이라는 닉네임을 할당
 
   console.log("Connected to Browser ✅");
 
@@ -44,7 +45,8 @@ wss.on("connection", (socket) => {
     console.log("Disconnected from the Browser ❌");
   });
 
-  // 클라이언트로부터 메시지를 받았을 때의 이벤트 리스너를 등록 (모든 메시지는 "message"로 동일하기 때문에 내부에서 type으로 구분해주어야 함)
+  // 클라이언트 => 서버
+  // 클라이언트로 부터 메시지를 받았을 때의 이벤트 리스너를 등록 (모든 메시지는 "message"로 동일하기 때문에 내부에서 type으로 구분해주어야 함)
   socket.on("message", (msg) => {
     const message = JSON.parse(msg); // JSON 형식의 메시지를 파싱
     switch (
